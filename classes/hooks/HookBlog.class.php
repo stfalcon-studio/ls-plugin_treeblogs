@@ -101,7 +101,7 @@ class PluginTreeblogs_HookBlog extends Hook
     {
         $oBlog = $aData['oBlog'];
         $oUserCurrent = $this->User_GetUserCurrent();
-        if ($oBlog->getBlogsOnly() && ($oUserCurrent && $oUserCurrent->isAdministrator())) {
+        if ($oBlog->getBlogsOnly() && !($oUserCurrent && $oUserCurrent->isAdministrator())) {
             return Router::Location('error');
         }
         $sShowType = $aData['sShowType'];
