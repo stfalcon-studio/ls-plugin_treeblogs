@@ -42,7 +42,7 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
 
     /**
      * Строим ветку для блога
-     * 
+     *
      * @param int BlogId
      * @return array aBlogId
      * */
@@ -67,12 +67,12 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
     }
 
     /**
-     * Строим дерево. 
-     * При $iParentId = null строим полное дерево. 
+     * Строим дерево.
+     * При $iParentId = null строим полное дерево.
      * Функция рекурсивна
-     * 
+     *
      * @param int ParentId
-     * @return array 
+     * @return array
      * */
     public function buidlTree($iParentId = null)
     {
@@ -103,12 +103,12 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
     }
 
     /**
-     * Обновление связи блог-блог
+     * Обновление данные блога по treeblog
      *
      * @param ModuleBlog_EntityBlog $oBlog
      * @return boolean
      */
-    public function UpdateParentId($oBlog)
+    public function UpdateTreeblogData($oBlog)
     {
         $this->Cache_Delete('blogs_parent_relations');
         /* чистим кеш полного дерева */
@@ -121,7 +121,7 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
             /* чистим кеш веток блогов */
             $this->Cache_Delete('blogs_tree_' . $blogId);
         }
-        return $this->oMapperBlog->UpdateParentId($oBlog);
+        return $this->oMapperBlog->UpdateTreeblogData($oBlog);
     }
 
     /**
@@ -142,37 +142,40 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
      * @param boolean $bShowPersonal
      * @return array
      */
-	public function GetMenuBlogs($bReturnIdOnly = false, $bShowPersonal=false)
+    public function GetMenuBlogs($bReturnIdOnly = false, $bShowPersonal = false)
     {
         $data = array();
-        if ($bShowPersonal) {
-		$data = $this->oMapperBlog->GetMenuBlogs($this->User_GetUserCurrent()->getId());
+        if ($bShowPersonal && $this->oUserCurrent) {
+            $data = $this->oMapperBlog->GetMenuBlogs($this->oUserCurrent->getId());
         } else {
-		$data = $this->oMapperBlog->GetMenuBlogs(0);
+            $data = $this->oMapperBlog->GetMenuBlogs(0);
         }
 
-        if ($bReturnIdOnly) {/* Возвращаем только иденитификаторы */
+        /* Возвращаем только иденитификаторы */
+        if ($bReturnIdOnly) {
             return $data;
         }
         return $this->Blog_GetBlogsAdditionalData($data);
     }
 
     /**
-     * Получаем блоги для выбора
-     * @param int $blogId
+     * Получаем блоги для выбора, исключая определенный блог
+     *
+     * @param int $iBlogId
      * @return array
      */
-    public function GetBlogsForSelect($blogId = null)
+    public function GetBlogsForSelect($iBlogId = null)
     {
         $aBlogSelect = array();
-        $aBlogs = $this->oMapperBlog->GetBlogsForSelect($blogId);
+        $aBlogs = $this->oMapperBlog->GetBlogsForSelect($iBlogId);
 
         foreach ($aBlogs as $oBlog) {
-            if (is_null($oBlog['parent_id'])) {
+            if (is_null($oBlog->getParentId())) {
                 array_push($aBlogSelect, $oBlog);
-                if ($subBlogs = $this->_getSubBlogs($oBlog['id'], $aBlogs, 1)) {
-                    foreach ($subBlogs as $subBlog) {
-                        array_push($aBlogSelect, $subBlog);
+                $aSubBlogs = $this->_getSubBlogs($oBlog->getId(), $aBlogs, 1);
+                if (count($aSubBlogs)) {
+                    foreach ($aSubBlogs as $oSubBlog) {
+                        array_push($aBlogSelect, $oSubBlog);
                     }
                 }
             }
@@ -188,16 +191,17 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
      * @param int level
      * @return array
      */
-    protected function _getSubBlogs($blogId, $aBlogs, $level)
+    protected function _getSubBlogs($iBlogId, $aBlogs, $level)
     {
         $aBlogsSub = array();
         foreach ($aBlogs as $oBlog) {
-            if ($oBlog['parent_id'] == $blogId) {
-                $oBlog['title'] = str_repeat('&nbsp;-&nbsp;', $level) . $oBlog['title'];
+            if ($oBlog->getParentId() == $iBlogId) {
+                $oBlog->setTitle(str_repeat('&nbsp;-&nbsp;', $level) . $oBlog->getTitle());
                 array_push($aBlogsSub, $oBlog);
-                if ($subBlogs = $this->_getSubBlogs($oBlog['id'], $aBlogs, $level + 1)) {
-                    foreach ($subBlogs as $subBlog) {
-                        array_push($aBlogsSub, $subBlog);
+                $aSubBlogs = $this->_getSubBlogs($oBlog->getId(), $aBlogs, $level + 1);
+                if (count($aSubBlogs)) {
+                    foreach ($aSubBlogs as $oSubBlog) {
+                        array_push($aBlogsSub, $oSubBlog);
                     }
                 }
             }
@@ -238,24 +242,9 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
         }
     }
 
-    /**
-     * Update order num
-     * 
-     * @param ModuleBlog_EntityBlog $oBlog
-     * @return bool 
-     */
-    public function UpdateOrderNum($oBlog)
-    {
-        return $this->oMapperBlog->UpdateOrderNum($oBlog);
-    }
-
-    public function UpdateBlogsOnly($oBlog)
-    {
-        return $this->oMapperBlog->UpdateBlogsOnly($oBlog);
-    }
-    
     public function GetBlogOnlyBlogs()
     {
         return $this->oMapperBlog->GetBlogOnlyBlogs();
     }
+
 }

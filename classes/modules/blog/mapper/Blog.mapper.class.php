@@ -22,7 +22,7 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
 	 *
 	 * @param ModuleBlog_EntityBlog $oBlog
 	 * @return int BlogId
-	 */	
+	 */
 	public function getParentBlogId($blog_id)
 	{
 		$sql = "
@@ -38,19 +38,23 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
 	}
 
 	/**
-	 * Обновление связи блог-блог
+	 * Обновление данные блога по treeblog
 	 *
 	 * @param ModuleBlog_EntityBlog $oBlog
 	 * @return boolean
 	 */
-	public function UpdateParentId($oBlog)
+	public function UpdateTreeblogData($oBlog)
 	{
-		$sql = "
-		UPDATE " . Config::Get('db.table.blog') . "
-		   SET parent_id = ?
-		 WHERE blog_id = ?d
+		$sql = "UPDATE
+                    " . Config::Get('db.table.blog') . "
+                SET
+                    parent_id = ?,
+                    order_num = ?,
+                    blogs_only = ?
+                WHERE
+                    blog_id = ?d
 		";
-		$this->oDb->query($sql, $oBlog->getParentId(), $oBlog->getId());
+		$this->oDb->query($sql, $oBlog->getParentId(), $oBlog->getOrderNum(), $oBlog->getBlogsOnly(), $oBlog->getId());
 		return true;
 	}
 
@@ -121,23 +125,31 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
 	/**
 	 * Возвращаем блоги для выбора
 	 *
-	 * @param int|null $blogId
-	 * @return array
+	 * @param int|null $iBlogId
+	 * @return \ModuleBlog_EntityBlog
 	 */
-	public function GetBlogsForSelect($blogId = null)
+	public function GetBlogsForSelect($iBlogId = null)
 	{
-		$sql = "
-		SELECT b.blog_id as id, b.blog_title as title, b.parent_id
-		  FROM " . Config::Get('db.table.blog') . " as b
-		 WHERE b.blog_type<>'personal' AND b.blog_type = 'open'
-		";
-		if ( $blogId>0 ) {
-			$sql .= 'AND b.blog_id <> ' . $blogId;
+		$sql = "SELECT
+                    *
+                FROM
+                    " . Config::Get('db.table.blog') . " as b
+                WHERE
+                    b.blog_type<>'personal'
+                  AND
+                    b.blog_type = 'open'
+
+                ";
+		if (!is_null($iBlogId)) {
+			$sql .= 'AND b.blog_id <> ' . $iBlogId;
 		}
 		$sql .= " ORDER BY b.blog_title";
+
 		$aBlogs = array();
 		if ($aRows = $this->oDb->select($sql)) {
-			$aBlogs = $aRows;
+            foreach ($aRows as $aRow) {
+                $aBlogs[] = Engine::GetEntity('Blog',$aRow);
+            }
 		}
 		return $aBlogs;
 	}
@@ -157,46 +169,19 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
 		}
 		return $aBlogs;
 	}
-    
+
     /**
-	 * Update order num
-	 *
-	 * @param ModuleBlog_EntityBlog $oBlog
-	 * @return boolean
-	 */
-	public function UpdateOrderNum($oBlog)
-	{
-		$sql = "UPDATE 
-                    " . Config::Get('db.table.blog') . "
-                SET 
-                    order_num = ?d
-                WHERE 
-                    blog_id = ?d
-                ";
-		$this->oDb->query($sql, $oBlog->getOrderNum(), $oBlog->getId());
-		return true;
-	}
-	
-    public function UpdateBlogsOnly($oBlog)
-	{
-		$sql = "UPDATE 
-                    " . Config::Get('db.table.blog') . "
-                SET 
-                    blogs_only = ?d
-                WHERE 
-                    blog_id = ?d
-                ";
-		$this->oDb->query($sql, $oBlog->getBlogsOnly(), $oBlog->getId());
-		return true;
-	}
-    
+     * Get blog ids for blog only
+     *
+     * @return array()
+     */
     public function GetBlogOnlyBlogs()
 	{
-		$sql = "SELECT 
+		$sql = "SELECT
                     blog_id
-                FROM 
+                FROM
                     " . Config::Get('db.table.blog') . "
-                WHERE 
+                WHERE
                     blogs_only = 1
                 ";
         $aBlogs = array();
@@ -208,16 +193,16 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
 		return $aBlogs;
 	}
 
-    
+
     public function GetBlogs() {
-		$sql = "SELECT 
-			b.blog_id			 
-			FROM 
-				".Config::Get('db.table.blog')." as b				
-			WHERE 				
-				b.blog_type<>'personal'
-            AND blogs_only = 0    
-				";	
+		$sql = "SELECT
+                    b.blog_id
+                FROM
+                    ".Config::Get('db.table.blog')." as b
+                WHERE
+                    b.blog_type<>'personal'
+                AND blogs_only = 0
+				";
 		$aBlogs=array();
 		if ($aRows=$this->oDb->select($sql)) {
 			foreach ($aRows as $aBlog) {
@@ -228,15 +213,15 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
 	}
 
     public function GetBlogsRating(&$iCount,$iCurrPage,$iPerPage) {
-		$sql = "SELECT 
-					b.blog_id													
-				FROM 
-					".Config::Get('db.table.blog')." as b 									 
-				WHERE 									
-					b.blog_type<>'personal'	
-                AND blogs_only = 0        
+		$sql = "SELECT
+					b.blog_id
+				FROM
+					".Config::Get('db.table.blog')." as b
+				WHERE
+					b.blog_type<>'personal'
+                AND blogs_only = 0
 				ORDER by b.blog_rating desc
-				LIMIT ?d, ?d 	";		
+				LIMIT ?d, ?d 	";
 		$aReturn=array();
 		if ($aRows=$this->oDb->selectPage($iCount,$sql,($iCurrPage-1)*$iPerPage, $iPerPage)) {
 			foreach ($aRows as $aRow) {
@@ -245,24 +230,24 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
 		}
 		return $aReturn;
 	}
-	
-	public function GetBlogsRatingJoin($sUserId,$iLimit) {		
-		$sql = "SELECT 
-					b.*													
-				FROM 
+
+	public function GetBlogsRatingJoin($sUserId,$iLimit) {
+		$sql = "SELECT
+					b.*
+				FROM
 					".Config::Get('db.table.blog_user')." as bu,
-					".Config::Get('db.table.blog')." as b	
-				WHERE 	
+					".Config::Get('db.table.blog')." as b
+				WHERE
 					bu.user_id = ?d
 					AND
 					bu.blog_id = b.blog_id
-					AND				
+					AND
 					b.blog_type<>'personal'
-                AND blogs_only = 0    
+                AND blogs_only = 0
 				ORDER by b.blog_rating desc
-				LIMIT 0, ?d 
-				;	
-					";		
+				LIMIT 0, ?d
+				;
+					";
 		$aReturn=array();
 		if ($aRows=$this->oDb->select($sql,$sUserId,$iLimit)) {
 			foreach ($aRows as $aRow) {
@@ -271,20 +256,20 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
 		}
 		return $aReturn;
 	}
-	
-	public function GetBlogsRatingSelf($sUserId,$iLimit) {		
-		$sql = "SELECT 
-					b.*													
-				FROM 					
-					".Config::Get('db.table.blog')." as b	
-				WHERE 						
+
+	public function GetBlogsRatingSelf($sUserId,$iLimit) {
+		$sql = "SELECT
+					b.*
+				FROM
+					".Config::Get('db.table.blog')." as b
+				WHERE
 					b.user_owner_id = ?d
-					AND				
+					AND
 					b.blog_type<>'personal'
-                AND blogs_only = 0        
+                AND blogs_only = 0
 				ORDER by b.blog_rating desc
-				LIMIT 0, ?d 
-			;";		
+				LIMIT 0, ?d
+			;";
 		$aReturn=array();
 		if ($aRows=$this->oDb->select($sql,$sUserId,$iLimit)) {
 			foreach ($aRows as $aRow) {
@@ -293,12 +278,12 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
 		}
 		return $aReturn;
 	}
-	
+
 	public function GetCloseBlogs() {
-		$sql = "SELECT b.blog_id										
-				FROM ".Config::Get('db.table.blog')." as b					
+		$sql = "SELECT b.blog_id
+				FROM ".Config::Get('db.table.blog')." as b
 				WHERE b.blog_type='close'
-                AND blogs_only = 0    
+                AND blogs_only = 0
 			;";
 		$aReturn=array();
 		if ($aRows=$this->oDb->select($sql)) {
@@ -308,5 +293,5 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
 		}
 		return $aReturn;
 	}
-    
+
 }

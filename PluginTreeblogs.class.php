@@ -19,17 +19,17 @@ if (!class_exists('Plugin')) {
 
 class PluginTreeblogs extends Plugin
 {
-    /*Переопределяем шаблоны из базовой комплектации*/ 
+    /*Переопределяем шаблоны из базовой комплектации*/
     protected $aDelegates=array(
             'template'=>array(
-//                    'topic.tpl', 
+//                    'topic.tpl',
 //                    'topic_list.tpl',
-                    'actions/ActionTopic/add.tpl',
+//                    'actions/ActionTopic/add.tpl',
                     'block.treeblogs.tpl',
                     'treeblogs-level.tpl',
-            ),       
+            ),
     );
-	
+
     public $aInherits = array(
 //        'action' => array(
 //            'ActionBlog' => '_ActionBlog'),
@@ -62,7 +62,8 @@ class PluginTreeblogs extends Plugin
      */
     public function Init()
     {
-
+        $this->Viewer_AppendScript(Plugin::GetTemplatePath(__CLASS__) . 'js/treeblogs.js');
+        $this->Viewer_AppendStyle(Plugin::GetTemplatePath(__CLASS__) . 'css/treeblogs.css');
     }
 
     /**

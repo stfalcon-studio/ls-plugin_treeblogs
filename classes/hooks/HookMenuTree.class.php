@@ -27,16 +27,16 @@ class PluginTreeblogs_HookMenuTree extends Hook
      */
     public function RegisterHook()
     {
-        $this->AddHook('topic_show', 'TreeMenuShow', __CLASS__);
-        $this->AddHook('blog_collective_show', 'TreeMenuShow', __CLASS__);
-        //$this->AddHook('blog_show', 'TreeMenuShow', __CLASS__);
-        $this->AddHook('personal_show', 'TreeMenuShow', __CLASS__);
-
-        $this->AddHook('init_action', 'InitAction', __CLASS__);
+//        $this->AddHook('topic_show', 'TreeMenuShow', __CLASS__);
+//        $this->AddHook('blog_collective_show', 'TreeMenuShow', __CLASS__);
+//        //$this->AddHook('blog_show', 'TreeMenuShow', __CLASS__);
+//        $this->AddHook('personal_show', 'TreeMenuShow', __CLASS__);
+//
+//        $this->AddHook('init_action', 'InitAction', __CLASS__);
     }
 
     /**
-     * Выводим блок - "дерево категорий". 
+     * Выводим блок - "дерево категорий".
      * @param array $aData
      *
      * @return void
@@ -53,7 +53,7 @@ class PluginTreeblogs_HookMenuTree extends Hook
     /**
      * Показываем блок "дерево категорий" для index страницы
      * @param array $aVars
-     * 
+     *
      * @return void
      * */
     public function InitAction($aVars)
