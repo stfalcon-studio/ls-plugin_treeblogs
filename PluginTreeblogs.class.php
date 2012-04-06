@@ -31,8 +31,8 @@ class PluginTreeblogs extends Plugin
     );
 
     public $aInherits = array(
-//        'action' => array(
-//            'ActionBlog' => '_ActionBlog'),
+        'action' => array(
+            'ActionAjax' => '_ActionAjax'),
         'module' => array(
             'ModuleBlog' => '_ModuleBlog',
             'ModuleTopic' => '_ModuleTopic',

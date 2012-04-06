@@ -65,13 +65,16 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
 	 */
 	public function GetSubBlogs($BlogId, $iLimit)
 	{
-		$sql = "
-		SELECT b.blog_id
-		  FROM " . Config::Get('db.table.blog') . " as b
-		 WHERE b.parent_id = ?
-		 ORDER BY b.blog_rating DESC
-		 {LIMIT ?d}
-		";
+		$sql = "SELECT
+                    b.blog_id
+                FROM
+                    " . Config::Get('db.table.blog') . " as b
+                WHERE
+                    b.parent_id = ?
+                ORDER BY
+                    b.blog_rating DESC
+                {LIMIT ?d}
+                ";
 		$aBlogs = array();
 		if ($aRows = $this->oDb->select($sql, $BlogId, $iLimit?$iLimit:DBSIMPLE_SKIP)) {
 			foreach ($aRows as $aBlog) {

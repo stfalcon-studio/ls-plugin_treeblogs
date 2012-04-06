@@ -25,19 +25,23 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
      * @param int BlogId
      * @return aBlogId|int
      * */
-    public function GetSibling($BlogId)
+    public function GetSibling($iBlogId, $bReturnIdOnly = true)
     {
-        $oBlog = $this->Blog_GetBlogsAdditionalData($BlogId);
-        if (count($oBlog) == 0) {
+        $oBlog = $this->GetBlogById($iBlogId);
+        if (!$oBlog) {
             return array();
         }
-        $parentid = $oBlog[$BlogId]->getParentId();
-        if (isset($parentid)) {
-            $aBlogId = $this->oMapperBlog->GetSubBlogs($parentid);
+        $iParentId = $oBlog->getParentId();
+        if (!is_null($iParentId)) {
+            $aBlogId = $this->oMapperBlog->GetSubBlogs($iParentId, 0);
         } else {
-            $aBlogId = $this->oMapperBlog->GetMenuBlogs($this->User_GetUserCurrent()->getId());
+            $aBlogId = $this->oMapperBlog->GetMenuBlogs($this->oUserCurrent ? $this->oUserCurrent->getId() : 0);
         }
-        return $aBlogId;
+        if ($bReturnIdOnly) {
+            return $aBlogId;
+        }
+
+        return $this->GetBlogsAdditionalData($aBlogId);
     }
 
     /**
@@ -127,12 +131,16 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
     /**
      * Получаем под-блоги
      *
-     * @param int $blogId
+     * @param int $iBlogId
      * @return array
      */
-    public function GetSubBlogs($blogId, $iLimit = 0)
+    public function GetSubBlogs($iBlogId, $iLimit = 0, $bReturnIdOnly = true)
     {
-        return $this->oMapperBlog->GetSubBlogs($blogId, $iLimit);
+        $data = $this->oMapperBlog->GetSubBlogs($iBlogId, $iLimit);
+        if ($bReturnIdOnly) {
+            return $data;
+        }
+        return $this->GetBlogsAdditionalData($data);
     }
 
     /**
@@ -155,7 +163,7 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
         if ($bReturnIdOnly) {
             return $data;
         }
-        return $this->Blog_GetBlogsAdditionalData($data);
+        return $this->GetBlogsAdditionalData($data);
     }
 
     /**
