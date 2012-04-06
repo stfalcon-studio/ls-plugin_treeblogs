@@ -64,15 +64,15 @@ class PluginTreeblogs_ActionAjax extends PluginTreeblogs_Inherit_ActionAjax
                 $this->Viewer_Assign('groupid', $groupid);
                 $this->Viewer_Assign('nextlevel', $nextlevel);
 
-                $aBlogs = $this->Blog_GetSubBlogs($sBlogId, 0, false);
-                if (count($aBlogs)) {
-                    reset($aBlogs);
-                    $iBlogId = key($aBlogs);
-                    $iParentId = $aBlogs[$iBlogId]->getParentId();
+                $aResult = $this->Blog_GetSubBlogs($sBlogId);
+                if ($aResult['count']) {
+                    reset($aResult['collection']);
+                    $iBlogId = key($aResult['collection']);
+                    $iParentId = $aResult['collection'][$iBlogId]->getParentId();
 
                     $this->Viewer_VarAssign();
                     $this->Viewer_Assign('BlogId', $sBlogId);
-                    $this->Viewer_Assign('aBlogs', $aBlogs);
+                    $this->Viewer_Assign('aBlogs', $aResult['collection']);
                     $this->Viewer_Assign('ParentId', $iParentId);
                     $sText = $this->Viewer_Fetch(Plugin::GetTemplatePath('treeblogs') . 'actions/ActionTopic/select_blogs.tpl');
                     $this->Viewer_AssignAjax('select', $sText);

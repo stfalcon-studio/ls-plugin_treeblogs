@@ -70,8 +70,8 @@ class PluginTreeblogs_ModuleTopic extends PluginTreeblogs_Inherit_ModuleTopic
                 $aFilter['blog_id'] = array($aFilter['blog_id']);
             }
             $aBlogsId = $aFilter['blog_id'];
-            foreach ($aFilter['blog_id'] as $blogId) {
-                $subBlogs = $this->_getSubBlogs($blogId);
+            foreach ($aFilter['blog_id'] as $sBlogId) {
+                $subBlogs = $this->_getSubBlogs($sBlogId);
                 $aBlogsId = array_merge($aBlogsId, $subBlogs);
             }
             $aFilter['blog_id'] = $aBlogsId;
@@ -89,18 +89,18 @@ class PluginTreeblogs_ModuleTopic extends PluginTreeblogs_Inherit_ModuleTopic
     /**
      * Получаем под блоги
      *
-     * @param int $BlogId
+     * @param int $iBlogId
      * @return array
      */
-    protected function _getSubBlogs($BlogId)
+    protected function _getSubBlogs($iBlogId)
     {
-        $blogIds = array();
-        $blogIds = $this->Blog_GetSubBlogs($BlogId);
-        foreach ($blogIds as $BlogId) {
-            $subBlogIds = $this->_getSubBlogs($BlogId);
-            $blogIds = array_merge($blogIds, $subBlogIds);
+        $aBlogId = array();
+        $aSubBlogId = $this->Blog_GetSubBlogs($iBlogId, 0, 0, true);
+        foreach ($aSubBlogId['collection'] as $iSubBlogId) {
+            $aSubBlogIds = $this->_getSubBlogs($iSubBlogId);
+            $aBlogId = array_merge($aBlogId, $aSubBlogIds);
         }
-        return $blogIds;
+        return $aBlogId;
     }
 
     /**

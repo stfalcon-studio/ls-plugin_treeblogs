@@ -22,17 +22,18 @@ class PluginTreeblogs extends Plugin
     /*Переопределяем шаблоны из базовой комплектации*/
     protected $aDelegates=array(
             'template'=>array(
-//                    'topic.tpl',
-//                    'topic_list.tpl',
-//                    'actions/ActionTopic/add.tpl',
                     'block.treeblogs.tpl',
+                    'block.blogslist.tpl',
                     'treeblogs-level.tpl',
+                    'treeblogs-list.tpl',
             ),
     );
 
     public $aInherits = array(
         'action' => array(
-            'ActionAjax' => '_ActionAjax'),
+            'ActionAjax' => '_ActionAjax',
+            'ActionBlogs' => '_ActionBlogs'
+        ),
         'module' => array(
             'ModuleBlog' => '_ModuleBlog',
             'ModuleTopic' => '_ModuleTopic',

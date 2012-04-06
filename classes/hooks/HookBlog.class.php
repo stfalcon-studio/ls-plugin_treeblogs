@@ -117,9 +117,8 @@ class PluginTreeblogs_HookBlog extends Hook
             return Router::Location('error');
         }
         $sShowType = $aData['sShowType'];
-        $aBlogsId = $this->Blog_GetSubBlogs($oBlog->getId());
-        $aBlogs = $this->Blog_GetBlogsByArrayId($aBlogsId);
-        $this->Viewer_Assign('aBlogsSub', $aBlogs);
+        $aResult = $this->Blog_GetSubBlogs($oBlog->getId());
+        $this->Viewer_Assign('aBlogsSub', $aResult['collection']);
         $this->makePaging($oBlog, $sShowType);
         $aBlogFilter = explode(' ', getRequest('b'));
         $this->Viewer_Assign('aBlogFilter', $aBlogFilter);

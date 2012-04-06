@@ -33,7 +33,7 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
         }
         $iParentId = $oBlog->getParentId();
         if (!is_null($iParentId)) {
-            $aBlogId = $this->oMapperBlog->GetSubBlogs($iParentId, 0);
+            $aBlogId = $this->oMapperBlog->GetAllSubBlogs($iParentId);
         } else {
             $aBlogId = $this->oMapperBlog->GetMenuBlogs($this->oUserCurrent ? $this->oUserCurrent->getId() : 0);
         }
@@ -96,9 +96,8 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
             return $aTree;
         } else {
             /* Уровни имеющие родителя, уровень >= 1 */
-            $aBlogsId = $this->GetSubBlogs($iParentId, Config::Get('plugin.treeblogs.blogs.count'));
-            $aoBlogs = $this->Blog_GetBlogsAdditionalData($aBlogsId);
-            foreach ($aoBlogs as $oBlog) {
+            $aBlogs = $this->GetSubBlogs($iParentId, 1,Config::Get('plugin.treeblogs.blogs.count'));
+            foreach ($aBlogs['collection'] as $oBlog) {
                 $aTree[$oBlog->getId()]['blog'] = $oBlog;
                 $aTree[$oBlog->getId()]['child'] = $this->buidlTree($oBlog->getId());
             }
@@ -134,13 +133,27 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
      * @param int $iBlogId
      * @return array
      */
-    public function GetSubBlogs($iBlogId, $iLimit = 0, $bReturnIdOnly = true)
+    public function GetSubBlogs($iBlogId, $iPage = 0, $iPerPage = 0, $bReturnIdOnly = false)
     {
-        $data = $this->oMapperBlog->GetSubBlogs($iBlogId, $iLimit);
+        $sKey = "blog_subblogs_" . $iBlogId . "_{$iPage}_{$iPerPage}";
+        if (false === ($data = $this->Cache_Get($sKey))) {
+            $data = ($iPage * $iPerPage != 0) ? array(
+                'collection' => $this->oMapperBlog->GetSubBlogs($iBlogId, $iCount, $iPage, $iPerPage),
+                'count' => $iCount
+                    ) : array(
+                'collection' => $this->oMapperBlog->GetAllSubBlogs($iBlogId),
+                'count' => $this->oMapperBlog->GetCountSubBlogs($iBlogId)
+                    );
+
+            $this->Cache_Set($data, $sKey, array("blog_update", "blog_new"), 60 * 60 * 24 * 2);
+        }
+
         if ($bReturnIdOnly) {
             return $data;
         }
-        return $this->GetBlogsAdditionalData($data);
+
+        $data['collection'] = $this->GetBlogsAdditionalData($data['collection']);
+        return $data;
     }
 
     /**

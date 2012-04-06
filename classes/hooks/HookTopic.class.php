@@ -85,11 +85,11 @@ class PluginTreeblogs_HookTopic extends Hook
                 reset($aRootBlogs);
                 $iBlogId = key($aRootBlogs);
                 /* второй уровень дерева (если он есть у $iBlogId) */
-                $aSecondBlogs = $this->Blog_GetSubBlogs($iBlogId);
+                $aResult = $this->Blog_GetSubBlogs($iBlogId);
 
                 array_push($aGroups, array(
                     'iBlogId' => $iBlogId,
-                    'aoLevelBlogs' => array($aRootBlogs, $aSecondBlogs),
+                    'aoLevelBlogs' => array($aRootBlogs, $aResult['collection']),
                     'aiLevelSelectedBlogId' => array($iBlogId),
                         )
                 );
@@ -108,20 +108,16 @@ class PluginTreeblogs_HookTopic extends Hook
 
             /* Формируем уровни блогов для <select> имеющие связи с топиком */
             foreach ($aiLevelSelectedBlogId as $iBlogId) {
-                array_push(
-                        $aoLevelBlogs, $this->Blog_GetSibling($iBlogId, false)
-                );
+                array_push($aoLevelBlogs, $this->Blog_GetSibling($iBlogId, false));
             }
 
             /* Ищем дочерние блоги для последнего в цепочке блога.
              * Топик может не иметь с нем никакой связи.
              * Отображаеться как невыбраный <select>
              */
-            $aTailBlogs = $this->Blog_GetSubBlogs($iBlogId, 0, false);
-            if (count($aTailBlogs)) {
-                array_push(
-                        $aoLevelBlogs, $aTailBlogs
-                );
+            $aResult = $this->Blog_GetSubBlogs($iBlogId);
+            if ($aResult['count']) {
+                array_push($aoLevelBlogs, $aResult['collection']);
             }
 
             array_push($aGroups, array('iBlogId' => $iBlogId,
