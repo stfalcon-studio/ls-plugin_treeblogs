@@ -35,19 +35,20 @@ class PluginTreeblogs_ActionBlogs extends PluginTreeblogs_Inherit_ActionBlogs
             return parent::EventNotFound();
         }
 
-        $iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
+//        $iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
+        $aBlogs = $this->Blog_buidlTree($oBlog->getId(), true);
 
-        $aResult = $this->Blog_GetSubBlogs($oBlog->getId(), $iPage, Config::Get('module.blog.per_page'));
-        $aBlogs = $aResult['collection'];
+//        $aResult = $this->Blog_GetSubBlogs($oBlog->getId(), $iPage, Config::Get('module.blog.per_page'));
+//        $aBlogs = $aResult['collection'];
 
         /**
          * Формируем постраничность
          */
-        $aPaging = $this->Viewer_MakePaging($aResult['count'], $iPage, Config::Get('module.blog.per_page'), 4, Router::GetPath('blogs'));
+//        $aPaging = $this->Viewer_MakePaging($aResult['count'], $iPage, Config::Get('module.blog.per_page'), 4, Router::GetPath('blogs'));
         /**
          * Загружаем переменные в шаблон
          */
-        $this->Viewer_Assign('aPaging', $aPaging);
+//        $this->Viewer_Assign('aPaging', $aPaging);
         $this->Viewer_Assign("aBlogs", $aBlogs);
         $this->Viewer_Assign("sBlogOrder", htmlspecialchars($sOrder));
         $this->Viewer_Assign("sBlogOrderWay", htmlspecialchars($sOrderWay));

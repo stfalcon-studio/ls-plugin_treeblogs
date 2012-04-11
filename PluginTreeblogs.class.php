@@ -26,6 +26,7 @@ class PluginTreeblogs extends Plugin
                     'block.blogslist.tpl',
                     'treeblogs-level.tpl',
                     'treeblogs-list.tpl',
+                    'blog_list.tpl',
             ),
     );
 

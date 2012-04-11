@@ -39,6 +39,19 @@ class PluginTreeblogs_ModuleBlog_EntityBlog extends PluginTreeblogs_Inherit_Modu
         }
     }
 
+    public function getParentBlog()
+    {
+        if (!isset($this->_aData['parent_blog'])) {
+            if ($this->_aData['parent_id']) {
+                $this->_aData['parent_blog'] = $this->Blog_GetBlogById($this->_aData['parent_id']);
+            } else {
+                $this->_aData['parent_blog'] = null;
+            }
+        }
+
+        return $this->_aData['parent_blog'];
+    }
+
     public function setOrderNum($data)
     {
         $this->_aData['order_num'] = $data;

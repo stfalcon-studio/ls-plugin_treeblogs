@@ -78,7 +78,7 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
      * @param int ParentId
      * @return array
      * */
-    public function buidlTree($iParentId = null)
+    public function buidlTree($iParentId = null, $bPlain = false)
     {
         $aTree = array();
         $sLang = Config::Get('lang_current');
@@ -89,20 +89,52 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
                 $aoBlogs = $this->Blog_GetBlogsAdditionalData($aBlogsId);
                 foreach ($aoBlogs as $oBlog) {
                     $aTree[$oBlog->getId()]['blog'] = $oBlog;
+                    $child = $this->buidlTree($oBlog->getId());
+                    $bOpen = false;
+                    foreach ($child as $branch) {
+                        if (count($branch['child'])) {
+                            $bOpen = true;
+                        }
+                    }
                     $aTree[$oBlog->getId()]['child'] = $this->buidlTree($oBlog->getId());
+                    $aTree[$oBlog->getId()]['open'] = $bOpen;
                 }
                 $this->Cache_Set($aTree, "blogs_full_tree_{$sLang}", array('blog_tree'), 60 * 60 * 3);
             }
-            return $aTree;
         } else {
             /* Уровни имеющие родителя, уровень >= 1 */
-            $aBlogs = $this->GetSubBlogs($iParentId, 1,Config::Get('plugin.treeblogs.blogs.count'));
+            $aBlogs = $this->GetSubBlogs($iParentId, 1, Config::Get('plugin.treeblogs.blogs.count'));
             foreach ($aBlogs['collection'] as $oBlog) {
                 $aTree[$oBlog->getId()]['blog'] = $oBlog;
+                $child = $this->buidlTree($oBlog->getId());
+                $bOpen = false;
+                foreach ($child as $branch) {
+                    if (count($branch['child'])) {
+                        $bOpen = true;
+                    }
+                }
                 $aTree[$oBlog->getId()]['child'] = $this->buidlTree($oBlog->getId());
+                $aTree[$oBlog->getId()]['open'] = $bOpen;
             }
-            return $aTree;
         }
+
+        if ($bPlain) {
+            $aBlogs = $this->buildFlat($aTree);
+            return $aBlogs;
+        }
+        return $aTree;
+    }
+
+    protected function buildFlat($aTree)
+    {
+        $aBlogs = array();
+        foreach ($aTree as $key => $aBranch) {
+            $aBlogs[$key] = $aBranch['blog'];
+            $aChildBlog = $this->buildFlat($aBranch['child']);
+            $aBlogs += $aChildBlog;
+
+        }
+        return $aBlogs;
     }
 
     /**
