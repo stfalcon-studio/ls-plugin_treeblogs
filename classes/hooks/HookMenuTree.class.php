@@ -1,4 +1,5 @@
 <?php
+
 /* ---------------------------------------------------------------------------
  * @Plugin Name: Treeblogs
  * @Plugin Id: Treeblogs
@@ -29,14 +30,14 @@ class PluginTreeblogs_HookMenuTree extends Hook
     {
         $this->AddHook('topic_show', 'TreeMenuShow', __CLASS__);
         $this->AddHook('blog_collective_show', 'TreeMenuShow', __CLASS__);
-        //$this->AddHook('blog_show', 'TreeMenuShow', __CLASS__);
+        $this->AddHook('blog_show', 'TreeMenuShow', __CLASS__);
         $this->AddHook('personal_show', 'TreeMenuShow', __CLASS__);
 
         $this->AddHook('init_action', 'InitAction', __CLASS__);
     }
 
     /**
-     * Выводим блок - "дерево категорий". 
+     * Выводим блок - "дерево категорий".
      * @param array $aData
      *
      * @return void
@@ -52,15 +53,12 @@ class PluginTreeblogs_HookMenuTree extends Hook
 
     /**
      * Показываем блок "дерево категорий" для index страницы
+     *
      * @param array $aVars
-     * 
      * @return void
-     * */
+     */
     public function InitAction($aVars)
     {
-        /* Подключаем css и js */
-        $this->Viewer_AppendStyle(Plugin::GetTemplateWebPath(__CLASS__) . 'css/tree-menu-block.css');
-        $this->Viewer_AppendScript(Plugin::GetTemplateWebPath(__CLASS__) . 'js/tree-menu-block.js');
         $action = Router::GetAction();
         if (in_array($action, $this->aActions)) {
             $this->TreeMenuShow(array());
