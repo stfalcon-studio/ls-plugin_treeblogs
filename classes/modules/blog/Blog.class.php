@@ -83,7 +83,7 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
         $aTree = array();
         $sLang = Config::Get('lang_current');
         if ($iParentId == null) {
-            /* Стартовая позиция, нулевой уровень, родителей нет. Пытаемся найти дерево в кеше */
+            // Стартовая позиция, нулевой уровень, родителей нет. Пытаемся найти дерево в кеше
             if (false === ($aTree = $this->Cache_Get("blogs_full_tree_{$sLang}"))) {
                 $aBlogsId = $this->oMapperBlog->GetMenuBlogs(0);
                 $aoBlogs = $this->Blog_GetBlogsAdditionalData($aBlogsId);
@@ -102,7 +102,7 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
                 $this->Cache_Set($aTree, "blogs_full_tree_{$sLang}", array('blog_tree'), 60 * 60 * 3);
             }
         } else {
-            /* Уровни имеющие родителя, уровень >= 1 */
+            // Уровни имеющие родителя, уровень >= 1
             $aBlogs = $this->GetSubBlogs($iParentId, 1, Config::Get('plugin.treeblogs.blogs.count'));
             foreach ($aBlogs['collection'] as $oBlog) {
                 $aTree[$oBlog->getId()]['blog'] = $oBlog;
@@ -146,9 +146,9 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
     public function UpdateTreeblogData($oBlog)
     {
         $this->Cache_Delete('blogs_parent_relations');
-        /* чистим кеш полного дерева */
+        // чистим кеш полного дерева
         $this->Cache_Delete('blogs_full_tree');
-        /* подчищаем все деревья для топиков */
+        // подчищаем все деревья для топиков
         $this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array('blog_tree'));
         $this->Cache_Clean(Zend_Cache::CLEANING_MODE_ALL, array('treeblogs.branches'));
         $aBlogsId = $this->oMapperBlog->GetMenuBlogs($this->User_GetUserCurrent()->getId());
@@ -204,7 +204,7 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
             $data = $this->oMapperBlog->GetMenuBlogs(0);
         }
 
-        /* Возвращаем только иденитификаторы */
+        // Возвращаем только иденитификаторы
         if ($bReturnIdOnly) {
             return $data;
         }
