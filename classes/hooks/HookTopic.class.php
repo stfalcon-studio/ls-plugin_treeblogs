@@ -28,30 +28,24 @@ class PluginTreeblogs_HookTopic extends Hook
     {
         /* Шаблонные хуки для редактировани/добавления и отображения топика */
 
-        /* template_form_add_topic_topic_begin - дополняет в шаблоне форму доб/ред 
+        /* template_form_add_topic_topic_begin - дополняет в шаблоне форму доб/ред
          * элементами <select> всех блогов топика.
-         * Включен в actions/ActionTopic/add.tpl   
+         * Включен в actions/ActionTopic/add.tpl
          */
         $this->AddHook('template_form_add_topic_topic_begin', 'TemplateFormAddTopicBegin', __CLASS__);
-        /* template_get_topics_blogs - дополняет отображение топика  
+        /* template_get_topics_blogs - дополняет отображение топика
          * "хлебными крошками" блогов связанных с ним.
-         * Влияет на topic.tpl, topic_list.tpl   
+         * Влияет на topic.tpl, topic_list.tpl
          */
         $this->AddHook('template_get_topics_blogs', 'TemplateTopicShow', __CLASS__);
 
-        /* Акшин хук для редактирования/добавления топика
-         * Подключаем в заголовке  js и css
-         */
-        $this->AddHook('topic_add_show', 'topicEditShow', __CLASS__);
-        $this->AddHook('topic_edit_show', 'topicEditShow', __CLASS__);
-
         /* Акшин хук для редактировани/добавления
          * Хук цепляеться на обработку запроса ред/доб топика
-         * Обновляет базу данных. 
+         * Обновляет базу данных.
          */
-        $this->AddHook('topic_add_after', 'TopicEditAf', __CLASS__);
-        $this->AddHook('topic_edit_after', 'TopicEditAf', __CLASS__);
-        
+        $this->AddHook('topic_add_after', 'TopicSubmitAfter', __CLASS__);
+        $this->AddHook('topic_edit_after', 'TopicSubmitAfter', __CLASS__);
+
         $this->AddHook('check_topic_fields', 'CheckFields', __CLASS__);
     }
 
@@ -66,11 +60,13 @@ class PluginTreeblogs_HookTopic extends Hook
         $iTopicId = getRequest('topic_id');
         $iBlogId = getRequest('blog_id');
         $aSubBlogs = getRequest('subblog_id') ? getRequest('subblog_id') : array();
-
+//        var_dump($iBlogId);
+//        var_dump($aSubBlogs);
         /* массив групп */
         $aGroups = array();
+        $oTopic = $this->Topic_GetTopicById($iTopicId);
 
-        if (isset($iTopicId)) {
+        if ($oTopic) {
             /* Редактирование топика */
             $aoTopic = $this->Topic_GetTopicsAdditionalData($iTopicId);
             $oTopic = $aoTopic[$iTopicId];
@@ -80,30 +76,28 @@ class PluginTreeblogs_HookTopic extends Hook
             /* основной блог топика. Помещаем в верх */
             //array_unshift($aSubBlogs, $oTopic->getBlogId());
         } else {
-            /* Добавлении нового топика */ 
-            if (!empty($iBlogId)) { /* добавление с ошибкой */
-                array_unshift($aSubBlogs, $iBlogId);
+            /* Добавлении нового топика */
+            if (!is_null($iBlogId)) { /* добавление с ошибкой */
+                array_push($aSubBlogs, $iBlogId);
             } else { /* первый заход, выводим корень */
                 /* 0 уровень дерева блогов, первый элемент блог по умолчанию */
-                $aiRootBlogs = $this->Blog_GetMenuBlogs(true, true);
-                $oaRootBlogs = $this->Blog_GetBlogsAdditionalData($aiRootBlogs);
-                $iBlogId = $aiRootBlogs[0];
-
+                $aRootBlogs = $this->Blog_GetMenuBlogs(false, true);
+                reset($aRootBlogs);
+                $iBlogId = key($aRootBlogs);
                 /* второй уровень дерева (если он есть у $iBlogId) */
-                $aSecondBlogs = $this->Blog_GetSubBlogs($iBlogId);
-                $oaSecondBlogs = $this->Blog_GetBlogsAdditionalData($aSecondBlogs);
+                $aResult = $this->Blog_GetSubBlogs($iBlogId);
 
                 array_push($aGroups, array(
                     'iBlogId' => $iBlogId,
-                    'aoLevelBlogs' => array($oaRootBlogs, $oaSecondBlogs),
+                    'aoLevelBlogs' => array($aRootBlogs, $aResult['collection']),
                     'aiLevelSelectedBlogId' => array($iBlogId),
                         )
                 );
             }
         }
         /* Формируем массив групп с полным перечислением родственных блогов и уровней
-         * Одна итерация - одна группа. 
-         * Для каждого блога-листа создаёться своя группа блогов руководствуясь деревом блогов. 
+         * Одна итерация - одна группа.
+         * Для каждого блога-листа создаёться своя группа блогов руководствуясь деревом блогов.
          * */
         foreach ($aSubBlogs as $iBlogId) {
             /* Массив массивов. Блоги всех уровней. Для заполнения <select> */
@@ -114,22 +108,16 @@ class PluginTreeblogs_HookTopic extends Hook
 
             /* Формируем уровни блогов для <select> имеющие связи с топиком */
             foreach ($aiLevelSelectedBlogId as $iBlogId) {
-                array_push(
-                        $aoLevelBlogs, $this->Blog_GetBlogsAdditionalData(
-                                $this->Blog_GetSibling($iBlogId)
-                        )
-                );
+                array_push($aoLevelBlogs, $this->Blog_GetSibling($iBlogId, false));
             }
 
-            /* Ищем дочерние блоги для последнего в цепочке блога. 
-             * Топик может не иметь с нем никакой связи. 
+            /* Ищем дочерние блоги для последнего в цепочке блога.
+             * Топик может не иметь с нем никакой связи.
              * Отображаеться как невыбраный <select>
              */
-            $tailBlogs = $this->Blog_GetSubBlogs($iBlogId);
-            if (count($tailBlogs) > 0) {
-                array_push(
-                        $aoLevelBlogs, $this->Blog_GetBlogsAdditionalData($tailBlogs)
-                );
+            $aResult = $this->Blog_GetSubBlogs($iBlogId);
+            if ($aResult['count']) {
+                array_push($aoLevelBlogs, $aResult['collection']);
             }
 
             array_push($aGroups, array('iBlogId' => $iBlogId,
@@ -150,23 +138,10 @@ class PluginTreeblogs_HookTopic extends Hook
      * @param array $data
      * @return string
      */
-    public function TopicEditAf($data)
+    public function TopicSubmitAfter($data)
     {
         $oTopic = $data['oTopic'];
         $this->Topic_MergeTopicBlogs($oTopic->getId(), $oTopic->getBlogId());
-    }
-
-    /**
-     * Акшин хук редактирования/добавления топика.
-     * Подключаем необходимые css & js
-     *
-     * @return string
-     * @return $aData
-     */
-    public function topicEditShow($aData)
-    {
-        $this->Viewer_AppendScript(Plugin::GetTemplateWebPath(__CLASS__) . 'js/blog-selector.js');
-        $this->Viewer_AppendStyle(Plugin::GetTemplateWebPath(__CLASS__) . 'css/blog-selector.css');
     }
 
     /**
@@ -178,12 +153,12 @@ class PluginTreeblogs_HookTopic extends Hook
      */
     public function TemplateTopicShow($aData)
     {
-        $oTopic = $aData['oTopic'];
+        $oTopic = $aData['topic'];
         $oBlogsTopic = $this->Topic_GetTopicBranches($oTopic);
         $this->Viewer_Assign('aBlogsTree', $oBlogsTopic);
         return $this->Viewer_Fetch(Plugin::GetTemplatePath('treeblogs') . 'actions/ActionTopic/crumbs.tpl');
     }
-    
+
     public function CheckFields($aData)
     {
         $btnOk = &$aData['bOk'];

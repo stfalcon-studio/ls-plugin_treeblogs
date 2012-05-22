@@ -23,4 +23,5 @@ return array(
     'blog_order_num' => 'Порядок отображения',
     'blog_blogs_only' => 'Не привязывать топики',
     'blog_connect_forbiden_blogs' => 'Попытка привязать к запрещенному блогу',
+    'blog_categories' => 'Категории',
 );
