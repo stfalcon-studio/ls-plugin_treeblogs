@@ -182,8 +182,9 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
                     b.blog_type = 'open'
 
                 ";
-        if (!is_null($iBlogId) && $iBlogId != "") {
-            $sql .= 'AND b.blog_id <> ' . $iBlogId;
+
+        if ((int) $iBlogId) {
+            $sql .= 'AND b.blog_id != ' . $iBlogId;
         }
         $sql .= " ORDER BY b.blog_title";
 
