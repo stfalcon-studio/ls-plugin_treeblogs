@@ -3,15 +3,13 @@
 class PluginTreeblogs_ActionAjax extends PluginTreeblogs_Inherit_ActionAjax
 {
 
-    protected function RegisterEvent()
-    {
+    protected function RegisterEvent() {
         parent::RegisterEvent();
 
         $this->AddEvent('treeblogs', 'EventTreeblogs');
     }
 
-    public function EventTreeblogs()
-    {
+    public function EventTreeblogs() {
         if (!$this->oUserCurrent) {
             $this->Viewer_AssignAjax('noValue', true);
             return;
