@@ -60,8 +60,6 @@ class PluginTreeblogs_HookTopic extends Hook
         $iTopicId = getRequest('topic_id');
         $iBlogId = getRequest('blog_id');
         $aSubBlogs = getRequest('subblog_id') ? getRequest('subblog_id') : array();
-//        var_dump($iBlogId);
-//        var_dump($aSubBlogs);
         /* массив групп */
         $aGroups = array();
         $oTopic = $this->Topic_GetTopicById($iTopicId);
@@ -163,10 +161,8 @@ class PluginTreeblogs_HookTopic extends Hook
     {
         $btnOk = &$aData['bOk'];
         $aForbidenBlogs = $this->Blog_GetBlogOnlyBlogs();
-        $aBlogs = getRequest('subblog_id', array());
-        if (getRequest('blog_id') == getRequest(0) || getRequest(0) == '-1') {
-            $aBlogs[] = getRequest('blog_id');
-        }
+        $aSubblogsList = getRequest('subblog_id', array());
+        $aBlogs = array_merge( array(getRequest('blog_id')), $aSubblogsList);
         foreach ($aBlogs as $sBlogId) {
             if (in_array($sBlogId, $aForbidenBlogs)) {
                 $this->Message_AddError(
@@ -174,6 +170,14 @@ class PluginTreeblogs_HookTopic extends Hook
                         $this->Lang_Get('error'));
                 $btnOk = false;
             }
+        }
+
+        $aCollapsedBlogs = array_flip(array_flip($aBlogs));
+        if (count($aCollapsedBlogs) != count($aBlogs)) {
+            $this->Message_AddError(
+                $this->Lang_Get('blog_connect_forbiden_blogs_duplacates'),
+                $this->Lang_Get('error'));
+            $btnOk = false;
         }
     }
 }

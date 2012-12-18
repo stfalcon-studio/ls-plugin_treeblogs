@@ -22,4 +22,5 @@ return array(
     'block_menutree_title' => 'Дерево блогів',
     'blog_order_num' => 'Порядок вiдображення',
     'blog_blogs_only' => 'Не прив\'язувати топiки',
+    'blog_connect_forbiden_blogs_duplacates' => 'Прив\'язані блоги повторюються',
 );
