@@ -181,7 +181,7 @@ class PluginTreeblogs_ModuleTopic extends PluginTreeblogs_Inherit_ModuleTopic
          */
         foreach ($blogs_db as $blog) {
             if (!in_array($blog, $aLeaf)) {
-                $this->oMapperTopic->DeleteTopicFromSubBlog($blog['blog_id'], $TopicId);
+                $this->oMapperTopic->DeleteTopicFromSubBlog($blog, $TopicId);
             }
         }
         /* Вставляем в базу данных
