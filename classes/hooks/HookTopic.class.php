@@ -33,6 +33,10 @@ class PluginTreeblogs_HookTopic extends Hook
          * Включен в actions/ActionTopic/add.tpl
          */
         $this->AddHook('template_form_add_topic_topic_begin', 'TemplateFormAddTopicBegin', __CLASS__);
+        $this->AddHook('template_form_add_topic_question_begin', 'TemplateFormAddTopicBegin', __CLASS__);
+        $this->AddHook('template_form_add_topic_link_begin', 'TemplateFormAddTopicBegin', __CLASS__);
+        $this->AddHook('template_form_add_topic_photoset_begin', 'TemplateFormAddTopicBegin', __CLASS__);
+
         /* template_get_topics_blogs - дополняет отображение топика
          * "хлебными крошками" блогов связанных с ним.
          * Влияет на topic.tpl, topic_list.tpl
@@ -47,6 +51,9 @@ class PluginTreeblogs_HookTopic extends Hook
         $this->AddHook('topic_edit_after', 'TopicSubmitAfter', __CLASS__);
 
         $this->AddHook('check_topic_fields', 'CheckFields', __CLASS__);
+        $this->AddHook('check_question_fields', 'CheckFields', __CLASS__);
+        $this->AddHook('check_link_fields', 'CheckFields', __CLASS__);
+        $this->AddHook('check_photoset_fields', 'CheckFields', __CLASS__);
     }
 
     /**
