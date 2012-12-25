@@ -59,6 +59,9 @@ class PluginTreeblogs_HookBlog extends Hook
             $data =  array(
                 'order_num' => 0
              );
+            if (getRequest('parent_id')) {
+                $data['parent_id'] = getRequest('parent_id');
+            }
         }
         $aBlogs = $this->Blog_GetBlogsForSelect($iBlogId);
         $this->Viewer_Assign('data', $data);

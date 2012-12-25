@@ -83,7 +83,7 @@ class PluginTreeblogs_HookTopic extends Hook
         } else {
             /* Добавлении нового топика */
             if (!is_null($iBlogId)) { /* добавление с ошибкой */
-                array_push($aSubBlogs, $iBlogId);
+                array_unshift($aSubBlogs,$iBlogId);
             } else { /* первый заход, выводим корень */
                 /* 0 уровень дерева блогов, первый элемент блог по умолчанию */
                 $aRootBlogs = $this->Blog_GetMenuBlogs(false, true);
