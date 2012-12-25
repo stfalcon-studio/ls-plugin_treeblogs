@@ -33,6 +33,10 @@ class PluginTreeblogs_HookTopic extends Hook
          * Включен в actions/ActionTopic/add.tpl
          */
         $this->AddHook('template_form_add_topic_topic_begin', 'TemplateFormAddTopicBegin', __CLASS__);
+        $this->AddHook('template_form_add_topic_question_begin', 'TemplateFormAddTopicBegin', __CLASS__);
+        $this->AddHook('template_form_add_topic_link_begin', 'TemplateFormAddTopicBegin', __CLASS__);
+        $this->AddHook('template_form_add_topic_photoset_begin', 'TemplateFormAddTopicBegin', __CLASS__);
+
         /* template_get_topics_blogs - дополняет отображение топика
          * "хлебными крошками" блогов связанных с ним.
          * Влияет на topic.tpl, topic_list.tpl
@@ -47,6 +51,9 @@ class PluginTreeblogs_HookTopic extends Hook
         $this->AddHook('topic_edit_after', 'TopicSubmitAfter', __CLASS__);
 
         $this->AddHook('check_topic_fields', 'CheckFields', __CLASS__);
+        $this->AddHook('check_question_fields', 'CheckFields', __CLASS__);
+        $this->AddHook('check_link_fields', 'CheckFields', __CLASS__);
+        $this->AddHook('check_photoset_fields', 'CheckFields', __CLASS__);
     }
 
     /**
@@ -60,8 +67,6 @@ class PluginTreeblogs_HookTopic extends Hook
         $iTopicId = getRequest('topic_id');
         $iBlogId = getRequest('blog_id');
         $aSubBlogs = getRequest('subblog_id') ? getRequest('subblog_id') : array();
-//        var_dump($iBlogId);
-//        var_dump($aSubBlogs);
         /* массив групп */
         $aGroups = array();
         $oTopic = $this->Topic_GetTopicById($iTopicId);
@@ -78,7 +83,7 @@ class PluginTreeblogs_HookTopic extends Hook
         } else {
             /* Добавлении нового топика */
             if (!is_null($iBlogId)) { /* добавление с ошибкой */
-                array_push($aSubBlogs, $iBlogId);
+                array_unshift($aSubBlogs,$iBlogId);
             } else { /* первый заход, выводим корень */
                 /* 0 уровень дерева блогов, первый элемент блог по умолчанию */
                 $aRootBlogs = $this->Blog_GetMenuBlogs(false, true);
@@ -163,10 +168,8 @@ class PluginTreeblogs_HookTopic extends Hook
     {
         $btnOk = &$aData['bOk'];
         $aForbidenBlogs = $this->Blog_GetBlogOnlyBlogs();
-        $aBlogs = getRequest('subblog_id', array());
-        if (getRequest('blog_id') == getRequest(0) || getRequest(0) == '-1') {
-            $aBlogs[] = getRequest('blog_id');
-        }
+        $aSubblogsList = getRequest('subblog_id', array());
+        $aBlogs = array_merge( array(getRequest('blog_id')), $aSubblogsList);
         foreach ($aBlogs as $sBlogId) {
             if (in_array($sBlogId, $aForbidenBlogs)) {
                 $this->Message_AddError(
@@ -174,6 +177,14 @@ class PluginTreeblogs_HookTopic extends Hook
                         $this->Lang_Get('error'));
                 $btnOk = false;
             }
+        }
+
+        $aCollapsedBlogs = array_flip(array_flip($aBlogs));
+        if (count($aCollapsedBlogs) != count($aBlogs)) {
+            $this->Message_AddError(
+                $this->Lang_Get('blog_connect_forbiden_blogs_duplacates'),
+                $this->Lang_Get('error'));
+            $btnOk = false;
         }
     }
 }
