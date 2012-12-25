@@ -21,5 +21,5 @@ return array(
     'del_group'	=> 'Delete group',
     'add_group'	=> 'Add another group',
     'block_menutree_title' => 'Tree blogs',
-    
+    'blog_connect_forbiden_blogs_duplacates' => 'Connected blogs are duplicated'
 );

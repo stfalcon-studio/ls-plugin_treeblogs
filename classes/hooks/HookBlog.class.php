@@ -44,6 +44,29 @@ class PluginTreeblogs_HookBlog extends Hook
      */
     public function TemplateFormAddBlogBegin()
     {
+        $iBlogId = getRequest('blog_id');
+        $data = array();
+        if ($iBlogId != NULL) {
+            $oBlog = $this->Blog_GetBlogById($iBlogId);
+            if (!isPost('submit_blog_add')) {
+             $data =  array(
+                'order_num' => $oBlog->getOrderNum(),
+                'parent_id' => $oBlog->getParentId(),
+                'blogs_only' => $oBlog->getBlogsOnly()
+             );
+            }
+        } else {
+            $data =  array(
+                'order_num' => 0
+             );
+            if (getRequest('parent_id')) {
+                $data['parent_id'] = getRequest('parent_id');
+            }
+        }
+        $aBlogs = $this->Blog_GetBlogsForSelect($iBlogId);
+        $this->Viewer_Assign('data', $data);
+        $this->Viewer_Assign('aBlogs', $aBlogs);
+        
         return $this->Viewer_Fetch(Plugin::GetTemplatePath(__CLASS__) . 'actions/ActionBlog/form_add_blog_to_blog.tpl');
     }
 
@@ -77,7 +100,6 @@ class PluginTreeblogs_HookBlog extends Hook
     public function BlogEditShow($aData)
     {
         $oBlog = $aData['oBlog'];
-
         if (!isPost('submit_blog_add')) {
             $_REQUEST['order_num'] = $oBlog->getOrderNum();
             $_REQUEST['parent_id'] = $oBlog->getParentId();
