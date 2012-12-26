@@ -21,5 +21,9 @@ return array(
     'del_group'	=> 'Delete group',
     'add_group'	=> 'Add another group',
     'block_menutree_title' => 'Tree blogs',
-    'blog_connect_forbiden_blogs_duplacates' => 'Connected blogs are duplicated'
+    'blog_connect_forbiden_blogs_duplacates' => 'Connected blogs are duplicated',
+    'blog_connect_forbiden_blogs' => 'Trying of connect to banned blog',
+    'blog_order_num' => 'View order',
+    'blog_blogs_only' => 'Don\'t connect the topics',
+    'blog_blogs_connect_alert' => 'If you check this option you can\'t connect topic to this blog',
 );

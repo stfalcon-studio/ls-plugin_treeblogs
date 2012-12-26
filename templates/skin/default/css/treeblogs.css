@@ -67,3 +67,4 @@ li.level2{font-style: oblique;}
 .menutree div.active{background-image: url(../images/ico_minus.gif);}
 .menutree div.end {background-image: url(../images/ico_end.gif);}
 
+#groups select { width: 150px; }

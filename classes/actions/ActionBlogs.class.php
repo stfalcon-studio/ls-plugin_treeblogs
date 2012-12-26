@@ -59,15 +59,11 @@ class PluginTreeblogs_ActionBlogs extends PluginTreeblogs_Inherit_ActionBlogs
          */
         $this->SetTemplateAction('index');
 
-        $this->Viewer_AddBlock(
-                'right', 'blogslist', array('plugin' => 'treeblogs', 'oBlog' => $oBlog), Config::Get('plugin.treeblogs.treemenu_block_priority')
-        );
+        $this->Viewer_AddBlock('right', 'blogslist', array('plugin' => 'treeblogs', 'oBlog' => $oBlog), Config::Get('plugin.treeblogs.treemenu_block_priority'));
     }
 
     protected function EventShowBlogs() {
-        $this->Viewer_AddBlock(
-                'right', 'blogslist', array('plugin' => 'treeblogs'), Config::Get('plugin.treeblogs.treemenu_block_priority')
-        );
+        $this->Viewer_AddBlock('right', 'blogslist', array('plugin' => 'treeblogs'), Config::Get('plugin.treeblogs.treemenu_block_priority'));
         parent::EventShowBlogs();
     }
 

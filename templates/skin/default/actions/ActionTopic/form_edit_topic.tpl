@@ -11,7 +11,7 @@
                     {if count($oBlogs)}
                         <select onchange="changeBlogSelector(this)" name="{$idxj}" id="g{$idxi}_{$idxj}">
                             {if (!($idxj==0 && $idxi==0) )}
-                                <option value="-1" selected>{$aLang.no_assign}</option>
+                                <option value="-1" selected>{$aLang.plugin.treeblogs.no_assign}</option>
                             {/if}
                             {foreach from=$oBlogs item=oBlog name=frch}
                                 <option {if $oBlog->getId() == $group.aiLevelSelectedBlogId[$idxj] }selected="selected"{/if} value="{$oBlog->getId()}">{$oBlog->getTitle()}{if $oBlog->getBlogsOnly()}*{/if}</option>
@@ -20,7 +20,7 @@
                     {/if}
 		{/foreach}
 		{if $idxi > 0}
-            <a href="#" onclick="delGroup({$idxi})">{$aLang.del_group}</a>
+            <a href="#" onclick="delGroup({$idxi})">{$aLang.plugin.treeblogs.del_group}</a>
 		{else}
             <a href="#"></a>
         {/if}
@@ -32,4 +32,4 @@
 <script>
     nxtGroup={$idxi};
 </script>
-<a href="#" onclick="addGroup()">{$aLang.add_group}</a>
+<a href="#" onclick="addGroup()">{$aLang.plugin.treeblogs.add_group}</a>

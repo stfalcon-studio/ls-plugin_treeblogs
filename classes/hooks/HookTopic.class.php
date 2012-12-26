@@ -37,6 +37,8 @@ class PluginTreeblogs_HookTopic extends Hook
         $this->AddHook('template_form_add_topic_link_begin', 'TemplateFormAddTopicBegin', __CLASS__);
         $this->AddHook('template_form_add_topic_photoset_begin', 'TemplateFormAddTopicBegin', __CLASS__);
 
+        $this->AddHook('template_topic_breadcrumbs_list', 'TemplateTopicShow', __CLASS__);
+
         /* template_get_topics_blogs - дополняет отображение топика
          * "хлебными крошками" блогов связанных с ним.
          * Влияет на topic.tpl, topic_list.tpl
@@ -160,6 +162,16 @@ class PluginTreeblogs_HookTopic extends Hook
     {
         $oTopic = $aData['topic'];
         $oBlogsTopic = $this->Topic_GetTopicBranches($oTopic);
+        //var_dump($oBlogsTopic);
+
+        foreach ($oBlogsTopic as $aKey => &$blog ) {
+            $blog = array_reverse($blog);
+            $blog = $blog[0];
+
+            if ($blog->getBlogId() == $oTopic->getBlogId()) {
+                unset($oBlogsTopic[$aKey]);
+            }
+        }
         $this->Viewer_Assign('aBlogsTree', $oBlogsTopic);
         return $this->Viewer_Fetch(Plugin::GetTemplatePath('treeblogs') . 'actions/ActionTopic/crumbs.tpl');
     }
@@ -173,7 +185,7 @@ class PluginTreeblogs_HookTopic extends Hook
         foreach ($aBlogs as $sBlogId) {
             if (in_array($sBlogId, $aForbidenBlogs)) {
                 $this->Message_AddError(
-                        $this->Lang_Get('blog_connect_forbiden_blogs'),
+                        $this->Lang_Get('plugin.treeblogs.blog_connect_forbiden_blogs'),
                         $this->Lang_Get('error'));
                 $btnOk = false;
             }
@@ -182,7 +194,7 @@ class PluginTreeblogs_HookTopic extends Hook
         $aCollapsedBlogs = array_flip(array_flip($aBlogs));
         if (count($aCollapsedBlogs) != count($aBlogs)) {
             $this->Message_AddError(
-                $this->Lang_Get('blog_connect_forbiden_blogs_duplacates'),
+                $this->Lang_Get('plugin.treeblogs.blog_connect_forbiden_blogs_duplacates'),
                 $this->Lang_Get('error'));
             $btnOk = false;
         }
