@@ -162,15 +162,10 @@ class PluginTreeblogs_HookTopic extends Hook
     {
         $oTopic = $aData['topic'];
         $oBlogsTopic = $this->Topic_GetTopicBranches($oTopic);
-        //var_dump($oBlogsTopic);
 
-        foreach ($oBlogsTopic as $aKey => &$blog ) {
+       foreach ($oBlogsTopic as $aKey => &$blog ) {
             $blog = array_reverse($blog);
             $blog = $blog[0];
-
-            if ($blog->getBlogId() == $oTopic->getBlogId()) {
-                unset($oBlogsTopic[$aKey]);
-            }
         }
         $this->Viewer_Assign('aBlogsTree', $oBlogsTopic);
         return $this->Viewer_Fetch(Plugin::GetTemplatePath('treeblogs') . 'actions/ActionTopic/crumbs.tpl');

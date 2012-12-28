@@ -151,7 +151,7 @@ class PluginTreeblogs_ModuleBlog extends PluginTreeblogs_Inherit_ModuleBlog
         // подчищаем все деревья для топиков
         $this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array('blog_tree'));
         $this->Cache_Clean(Zend_Cache::CLEANING_MODE_ALL, array('treeblogs.branches'));
-        $aBlogsId = $this->oMapperBlog->GetMenuBlogs($this->User_GetUserCurrent()->getId());
+        $aBlogsId = $this->oMapperBlog->GetMenuBlogs();
         foreach ($aBlogsId as $blogId) {
             /* чистим кеш веток блогов */
             $this->Cache_Delete('blogs_tree_' . $blogId);
