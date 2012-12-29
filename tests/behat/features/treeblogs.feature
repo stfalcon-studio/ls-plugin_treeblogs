@@ -158,6 +158,8 @@ Feature: Treeblogs plugin standart features BDD
         Then I select "test2_level1" from "g2_0"
         Then I send js message "change()" to element by css "#g2_0"
         Then I wait "2000"
+
+        Then I fill in "topic_text" with "Changed topic description"
 Then print last response
 
 
