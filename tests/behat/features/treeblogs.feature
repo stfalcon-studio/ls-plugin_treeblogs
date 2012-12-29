@@ -155,14 +155,9 @@ Feature: Treeblogs plugin standart features BDD
 
         Then I press element by css "#form-topic-add a[onclick='addGroup()']"
         Then I wait "2000"
-        Then I select "test2_level1" from "g2_0"
-        Then I send js message "change()" to element by css "#g2_0"
-        Then I wait "2000"
-
-  Then print last response
+        Then I chose option "7" from element "#g2_0"
 
         Then I press element by css "#submit_topic_publish"
-        Then print last response
         Then I wait "2000"
 
         Then I should see in element by css "content" values:

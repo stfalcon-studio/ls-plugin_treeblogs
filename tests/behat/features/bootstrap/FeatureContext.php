@@ -78,6 +78,23 @@ class FeatureContext extends MinkContext
         }
     }
 
+    /**
+     * @Then /^I chose option "([^"]*)" from element "([^"]*)"$/
+     */
+    public function iChoseOptionFromElement( $optionValue, $elementCss)
+    {
+        $element = $this->getSession()->getPage()->find('css', $elementCss);
+
+        if ($element) {
+            $this->getSession()->executeScript("$('{$elementCss} option[value=\"{$optionValue}\"]').attr('selected', 'selected')");
+            $this->getSession()->executeScript("$('{$elementCss}').change()");
+            sleep(2);
+        }
+        else {
+            throw new ExpectationException('Container not found', $this->getSession());
+        }
+    }
+
 }
 
 
