@@ -159,7 +159,7 @@ Feature: Treeblogs plugin standart features BDD
         Then I send js message "change()" to element by css "#g2_0"
 
         Then I press element by css "#submit_topic_publish"
-        Then I print last response
+        Then print last response
         Then I wait "2000"
 
         Then I should see in element by css "content" values:
