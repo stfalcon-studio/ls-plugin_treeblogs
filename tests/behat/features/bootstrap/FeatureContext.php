@@ -95,6 +95,16 @@ class FeatureContext extends MinkContext
         }
     }
 
+    /**
+     * @Then /^debug$/
+     */
+    public function debug()
+    {
+        $this->getSession()->executeScript("$('body').html(jQuery('#g2_0').val())");
+
+        echo ($this->getSession()->getPage()->getHtml());
+    }
+
 }
 
 

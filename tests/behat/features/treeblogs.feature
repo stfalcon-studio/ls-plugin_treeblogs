@@ -160,6 +160,8 @@ Feature: Treeblogs plugin standart features BDD
         Then I send js message "change()" to element by css "#g2_0"
         Then I wait "2000"
 
+        Then debug
+
 #Then print last response
 
         Then I fill in "topic_text" with "Changed topic description"
@@ -171,5 +173,5 @@ Feature: Treeblogs plugin standart features BDD
           | value |
           | second test topic |
           | class="topic-blog">Gadgets</a> |
-          | test2_level1 |
+          | class="topic-blog">test2_level1</a> |
 
