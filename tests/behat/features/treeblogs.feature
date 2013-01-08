@@ -165,12 +165,11 @@ Feature: Treeblogs plugin standart features BDD
         Then I fill in "topic_text" with "Changed topic description"
 
         Then I press element by css "#submit_topic_publish"
-#Then print last response
         Then I wait "5000"
 
         Then I should see in element by css "content" values:
           | value |
           | second test topic |
           | class="topic-blog">Gadgets</a> |
-          | class="topic-blog">test2_level1</a> |
+          | test2_level1 |
 
