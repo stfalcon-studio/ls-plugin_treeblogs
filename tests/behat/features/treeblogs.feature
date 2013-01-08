@@ -153,16 +153,14 @@ Feature: Treeblogs plugin standart features BDD
         Then I press element by css "#g1 a[onclick='delGroup(1)']"
         Then I wait "2000"
 
-  Then print last response
-
         Then I press element by css "#form-topic-add a[onclick='addGroup()']"
         Then I wait "2000"
-
-  Then print last response
 
         Then I select "test2_level1" from "g2_0"
         Then I send js message "change()" to element by css "#g2_0"
         Then I wait "2000"
+
+  Then print last response
 
         Then I fill in "topic_text" with "Changed topic description"
 
