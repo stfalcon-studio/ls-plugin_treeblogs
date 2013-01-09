@@ -46,5 +46,5 @@ before_script:
   - sleep 5
 
 
-#script: HTTP_APP_ENV=test cd tests/behat/ && php behat.phar --config='../../plugins/treeblogs/tests/behat/behat.yml'
-script: HTTP_APP_ENV=test cd tests/behat/ && php behat.phar --config='../../plugins/treeblogs/tests/behat/behat.yml' ../../plugins/treeblogs/tests/behat/features/treeblogs.feature:141-200
+script: HTTP_APP_ENV=test cd tests/behat/ && php behat.phar --config='../../plugins/treeblogs/tests/behat/behat.yml'
+#script: HTTP_APP_ENV=test cd tests/behat/ && php behat.phar --config='../../plugins/treeblogs/tests/behat/behat.yml' ../../plugins/treeblogs/tests/behat/features/treeblogs.feature:141-200
