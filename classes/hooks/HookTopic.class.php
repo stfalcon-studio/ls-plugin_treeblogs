@@ -175,7 +175,17 @@ class PluginTreeblogs_HookTopic extends Hook
     {
         $btnOk = &$aData['bOk'];
         $aForbidenBlogs = $this->Blog_GetBlogOnlyBlogs();
-        $aSubblogsList = getRequest('subblog_id', array());
+        $aSubblogsListFull = getRequest('subblog_id', array());
+        $aSubblogsList = array_diff($aSubblogsListFull, array(-1));
+
+        if (count($aSubblogsList) != count($aSubblogsListFull)) {
+            $_REQUEST['subblog_id'] = $aSubblogsList;
+            $this->Message_AddError(
+                $this->Lang_Get('plugin.treeblogs.blog_connect_empty_blogs'),
+                $this->Lang_Get('error'));
+            $btnOk = false;
+        }
+
         $aBlogs = array_merge( array(getRequest('blog_id')), $aSubblogsList);
         foreach ($aBlogs as $sBlogId) {
             if (in_array($sBlogId, $aForbidenBlogs)) {

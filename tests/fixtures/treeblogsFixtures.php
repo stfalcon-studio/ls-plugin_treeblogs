@@ -17,14 +17,15 @@ class treeblogsFixtures extends AbstractFixtures
 
     public function load()
     {
+        $mainBlog = $this->getReference('blog-gadgets');
+
         $firstLevelBlog = $this->createBlog('test1_level1', 'test1_level1', NULL, true);
         $secondLevelBlog = $this->createBlog('test1_level2', 'test1_level2', $firstLevelBlog->getBlogId());
+        $firstLevelBlog2 = $this->createBlog('test2_level1', 'test2_level1');
+        $secondLevelBlog2 = $this->createBlog('test2_level2', 'test2_level2', $firstLevelBlog2->getBlogId(), true);
 
-        $firstLevelBlog = $this->createBlog('test2_level1', 'test2_level1');
-        $secondLevelBlog = $this->createBlog('test2_level2', 'test2_level2', $firstLevelBlog->getBlogId(), true);
-
-        $firstTopic = $this->createTopic(4, 'first test topic', NULL, array(4, 6, 7));
-        $SecondTopic = $this->createTopic(4, 'second test topic', NULL, array(4, 6));
+        $firstTopic = $this->createTopic($mainBlog->getBlogId(), 'first test topic', NULL, array($mainBlog->getBlogId(), $secondLevelBlog->getBlogId(), $firstLevelBlog2->getBlogId()));
+        $SecondTopic = $this->createTopic($mainBlog->getBlogId(), 'second test topic', NULL, array($mainBlog->getBlogId(), $secondLevelBlog->getBlogId()));
     }
 
     protected function createBlog($blogTitle, $blogUrl, $parentBlogId = NULL, $closedBlog = false)

@@ -30,6 +30,8 @@ class FeatureContext extends MinkContext
     }
 
     /**
+     * Тест ищет все совпадения значений в таблице, в предлах одной строки TR (Проходит только если все из перечисленных значений найдены)
+     *
      * @Then /^element "([^"]*)" should contain values:$/
      */
     public function elementShouldContain($elementXpath, TableNode $value)
@@ -72,6 +74,27 @@ class FeatureContext extends MinkContext
         $element = $this->getSession()->getPage()->find('css', "$xPAth");
         if ($element) {
             $this->getSession()->executeScript("$('{$xPAth}').{$evenMessage}");
+        }
+        else {
+            throw new ExpectationException('Container not found', $this->getSession());
+        }
+    }
+
+    /**
+     * @Then /^element by css "([^"]*)" should have structure:$/
+     */
+    public function elementByCssShouldHaveStructure($cssElement, PyStringNode $stringList)
+    {
+        $pattern = array("\n", "\r\n", "\t", " ");
+        $collapsedTestStrings = str_replace($pattern, '', $stringList->getRaw());
+
+        $element = $this->getSession()->getPage()->find('css', "$cssElement");
+        if ($element) {
+            $collapsedResponseString = str_replace($pattern, '', $element->getHtml());
+
+            if ($collapsedResponseString != $collapsedTestStrings) {
+                throw new ExpectationException('Structure incorrect', $this->getSession());
+            }
         }
         else {
             throw new ExpectationException('Container not found', $this->getSession());

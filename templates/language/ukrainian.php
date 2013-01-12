@@ -24,6 +24,7 @@ return array(
     'blog_blogs_only' => 'Не прив\'язувати топiки',
     'blog_connect_forbiden_blogs' => 'Спроба привязати до забороненного блогу',
     'blog_connect_forbiden_blogs_duplacates' => 'Прив\'язані блоги повторюються',
+    'blog_connect_empty_blogs' => 'Не вибраний блог',
     'blog_order_num' => 'Порядок відображення',
     'blog_blogs_only' => 'Не привязувати статті',
     'blog_blogs_connect_alert' => 'Якщо ви виберете цю опіцію ви не зможене привязати ніяку статтю до цього блогу',
