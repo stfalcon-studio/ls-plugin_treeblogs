@@ -1,0 +1,70 @@
+/*Фильтр блогов на странице просмотра блога*/
+.sortThemes{
+	font-size:12px;
+	position:relative;
+    padding-left: 40px;
+    padding-right: 30px;
+    overflow: hidden;
+}
+.sortThemes a{
+	float:left;
+	color:#67abc2;
+	padding: 0 5px;
+	height: 16px;
+	margin-right: 9px;
+	text-decoration: none;
+	border: 1px solid #67abc2;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	position:relative;
+	background:#fff;
+    margin-bottom: 5px;
+}
+.sortThemes a:hover{
+	border-color:#2d6071;
+}
+.sortThemes a.active{
+    border: 1px solid #2C7284;
+    background: none repeat scroll 0 0 #E1E7E8;
+}
+
+.sortThemes a.active:hover{
+    border-color: #67ABC2;
+}
+
+/*Привязка топика к блогам*/
+div .group{
+   border: 1px solid orange;
+   padding: 5px 5px 2px;
+   margin: 5px 0 0 0;
+}
+
+/* Дерево блогов в сайд баре (блок)*/
+ul.treeblogs {list-style: none outside none;overflow: hidden;}
+ul.treeblogs li{float: left;margin-right: 3px;}
+
+.menutree {}
+.menutree ul.regular{display: none;}
+.menutree ul.active{display: block;}
+
+ul.level0{font-size: 13px;}
+li.level0{font-style: normal;}
+
+ul.level1{font-size: 12px;}
+li.level1{font-style: italic;}
+
+ul.level2{font-size: 11px;}
+li.level2{font-style: oblique;}
+
+.menutree li {}
+
+.menutree a.active{color: red;}
+.menutree a.regular{color: #70AAE0;}
+
+.menutree div{cursor: pointer;float: left;width: 12px;height:12px;padding-right: 2px;}
+.menutree div.regular{background-image: url(../images/ico_plus.gif);}
+.menutree div.active{background-image: url(../images/ico_minus.gif);}
+.menutree div.end {background-image: url(../images/ico_end.gif);}
+
+#groups select { width: 150px; }
