@@ -26,13 +26,15 @@ class PluginTreeblogs_HookBlog extends Hook
     public function RegisterHook()
     {
         $this->AddHook('template_form_add_blog_begin', 'TemplateFormAddBlogBegin', __CLASS__, -100);
-        $this->AddHook('template_menu_blog_begin', 'BlogMenu', __CLASS__);
+        $this->AddHook('template_topics_list_begin', 'TemplateTopicListBegin', __CLASS__, -100);
+
+        $this->AddHook('blog_add_show', 'BlogAddShow', __CLASS__);
+        $this->AddHook('blog_edit_show', 'BlogEditShow', __CLASS__);
 
         $this->AddHook('blog_add_after', 'BlogToBlog', __CLASS__);
         $this->AddHook('blog_edit_after', 'BlogToBlog', __CLASS__);
 
         $this->AddHook('blog_collective_show', 'BlogShow', __CLASS__, -100);
-        $this->AddHook('topic_show', 'TopicShow', __CLASS__);
     }
 
     /**
@@ -42,59 +44,91 @@ class PluginTreeblogs_HookBlog extends Hook
      */
     public function TemplateFormAddBlogBegin()
     {
-        $blogId = getRequest('blog_id');
-
-        /* Список блогов для привязки */
-        $aBlogs = $this->Blog_GetBlogsForSelect($blogId);
-
-        if ($blogId > 0) { /* редактирование блога */
-            //unset($aBlogs[$blogId]);
-            /* выставляем parent_id */
-            $oBlog = $this->Blog_GetBlogById($blogId);
-            $this->Viewer_Assign('parentId', $oBlog->getParentId());
-        } else { /* создание блога */
-            /* выставляем parent_id */
-            $parentId = getRequest('parent_id');
-            $this->Viewer_Assign('parentId', $parentId);
+        $iBlogId = getRequest('blog_id');
+        $data = array();
+        if ($iBlogId != NULL) {
+            $oBlog = $this->Blog_GetBlogById($iBlogId);
+            if (!isPost('submit_blog_add')) {
+             $data =  array(
+                'order_num' => $oBlog->getOrderNum(),
+                'parent_id' => $oBlog->getParentId(),
+                'blogs_only' => $oBlog->getBlogsOnly()
+             );
+            }
+        } else {
+            $data =  array(
+                'order_num' => 0
+             );
+            if (getRequest('parent_id')) {
+                $data['parent_id'] = getRequest('parent_id');
+            }
         }
-        /**/
+        $aBlogs = $this->Blog_GetBlogsForSelect($iBlogId);
+        $this->Viewer_Assign('data', $data);
         $this->Viewer_Assign('aBlogs', $aBlogs);
-        return $this->Viewer_Fetch(Plugin::GetTemplatePath('treeblogs') . 'actions/ActionBlog/form_add_blog_to_blog.tpl');
+        
+        return $this->Viewer_Fetch(Plugin::GetTemplatePath(__CLASS__) . 'actions/ActionBlog/form_add_blog_to_blog.tpl');
     }
 
     /**
-     * Обновление связи блог-блог
+     * Хук на список топиков, для отображения фильтра блогов
      *
-     * @param array $data
+     * @return string
      */
-    public function BlogToBlog($data)
+    public function TemplateTopicListBegin()
     {
-        $oBlog = $data['oBlog'];
-        $parentId = getRequest('parent_id');
-        $oBlog->setParentId($parentId);
-        $this->Blog_UpdateParentId($oBlog);
+        return $this->Viewer_Fetch(Plugin::GetTemplatePath(__CLASS__) . 'filter.subblogs.tpl');
+    }
+
+    /**
+     * Хук екшена добавления блога
+     */
+    public function BlogAddShow()
+    {
+        if (!getRequest('order_num')) {
+            $_REQUEST['order_num'] = 0;
+        }
+        $aBlogs = $this->Blog_GetBlogsForSelect();
+        $this->Viewer_Assign('aBlogs', $aBlogs);
+    }
+
+    /**
+     * Хук кшена редактирования блога
+     *
+     * @param array $aData
+     */
+    public function BlogEditShow($aData)
+    {
+        $oBlog = $aData['oBlog'];
+        if (!isPost('submit_blog_add')) {
+            $_REQUEST['order_num'] = $oBlog->getOrderNum();
+            $_REQUEST['parent_id'] = $oBlog->getParentId();
+            $_REQUEST['blogs_only'] = $oBlog->getBlogsOnly();
+        }
+        $aBlogs = $this->Blog_GetBlogsForSelect($oBlog->getId());
+        $this->Viewer_Assign('aBlogs', $aBlogs);
+    }
+
+    /**
+     * Обновление данных treeblogs при сохранении
+     *
+     * @param array $aData
+     */
+    public function BlogToBlog($aData)
+    {
+        $oBlog = $aData['oBlog'];
+        $oBlog->setParentId(getRequest('parent_id'));
         $oUser = $this->User_GetUserCurrent();
         if ($oUser->isAdministrator()) {
-            $iOrder = getRequest('order_num', 0);
-            $oBlog->setOrderNum($iOrder);
-            $this->Blog_UpdateOrderNum($oBlog);
-            $bOnly = getRequest('blogs_only', false);
-            $oBlog->setBlogsOnly($bOnly);
-            $this->Blog_UpdateBlogsOnly($oBlog);
+            $oBlog->setOrderNum(getRequest('order_num', 0));
+            $oBlog->setBlogsOnly(getRequest('blogs_only', false));
         }
+        $this->Blog_UpdateTreeblogData($oBlog);
     }
 
     /**
-     * Выбираем блоги для меню
-     */
-    public function BlogMenu()
-    {
-        $oBlogs = $this->Blog_GetMenuBlogs();
-        $this->Viewer_Assign('oBlogsNav', $oBlogs);
-    }
-
-    /**
-     *  Добавляем подблоги
+     * Добавляем подблоги
+     *
      * @param array $aData
      */
     public function BlogShow($aData)
@@ -105,19 +139,11 @@ class PluginTreeblogs_HookBlog extends Hook
             return Router::Location('error');
         }
         $sShowType = $aData['sShowType'];
-        $aBlogsId = $this->Blog_GetSubBlogs($oBlog->getId());
-        $blogNavActive = $this->Blog_GetTopParentId($oBlog->getId());
-        $aBlogs = $this->Blog_GetBlogsByArrayId($aBlogsId);
-        $this->Viewer_Assign('aBlogsSub', $aBlogs);
-        $this->Viewer_Assign('blogNavActive', $blogNavActive);
+        $aResult = $this->Blog_GetSubBlogs($oBlog->getId());
+        $this->Viewer_Assign('aBlogsSub', $aResult['collection']);
         $this->makePaging($oBlog, $sShowType);
-        $aSort = explode(' ', getRequest('s'));
-        $this->Viewer_Assign('aSort', $aSort);
-
         $aBlogFilter = explode(' ', getRequest('b'));
         $this->Viewer_Assign('aBlogFilter', $aBlogFilter);
-        $this->Viewer_AppendScript(Plugin::GetTemplatePath(__CLASS__) . 'js/blog-filters.js');
-        $this->Viewer_AppendStyle(Plugin::GetTemplatePath(__CLASS__) . 'css/blog-filters.css');
     }
 
     /**
@@ -128,11 +154,7 @@ class PluginTreeblogs_HookBlog extends Hook
     protected function makePaging($oBlog, $sShowType)
     {
         $urlParams = '';
-        if ($filters = $this->_getParamByName('filter')) {
-            $urlParams = '/filter/' . $filters;
-        }
         $getParams = array();
-        getRequest('s') ? $getParams['s'] = getRequest('s') : true;
         getRequest('b') ? $getParams['b'] = getRequest('b') : true;
         $iPage = $this->GetPage(($sShowType == 'good') ? 0 : 1, 2) ? $this->GetPage(($sShowType == 'good') ? 0 : 1, 2) : 1;
         $aResult = $this->Topic_GetTopicsByBlog($oBlog, $iPage, Config::Get('module.topic.per_page'), $sShowType);
@@ -147,7 +169,7 @@ class PluginTreeblogs_HookBlog extends Hook
      * @param int $iItem
      * @return int|null
      */
-    protected function GetPage($iParamNum, $iItem=null)
+    protected function GetPage($iParamNum, $iItem = null)
     {
         $params = Router::GetParams();
         if (!isset($params[$iParamNum])) {
@@ -168,33 +190,4 @@ class PluginTreeblogs_HookBlog extends Hook
             }
         }
     }
-
-    /**
-     * Получаем параметр из url
-     * @param string $name
-     * @return string|null
-     */
-    protected function _getParamByName($name)
-    {
-        $params = Router::GetParams();
-        if (in_array($name, $params)) {
-            $item = array_search($name, $params);
-            $key = Router::GetParam(++$item);
-            return $key;
-        }
-
-        return null;
-    }
-
-    /**
-     * Подсвечиваем главного родителя
-     * @param array $aData
-     */
-    public function TopicShow($aData)
-    {
-        $oTopic = $aData['oTopic'];
-        $blogNavActive = $this->Blog_GetTopParentId($oTopic->getBlogId());
-        $this->Viewer_Assign('blogNavActive', $blogNavActive);
-    }
-
 }

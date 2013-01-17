@@ -1,7 +1,6 @@
-   			{foreach from=$aBlogsTree item=oTree name=tree}
-				<ul class="treeblogs">
-   				{foreach from=$oTree item=oBlog name=blogs}
-					<li><a href="{$oBlog->getUrlFull()}">{$oBlog->getTitle()|escape:'html'}</a>&nbsp;&nbsp;{if !$smarty.foreach.blogs.last}→{/if}</li>
-   				{/foreach}
-				</ul>
-   			{/foreach}
+{foreach from=$aBlogsTree item=oTree name=tree}
+    <a href="{$oTree->getUrlFull()}" class="topic-blog">{$oTree->getTitle()|escape:'html'}</a>
+    {if $oTree->getType() != 'personal'}
+        <a href="#" class="blog-list-info" onclick="return ls.infobox.showInfoBlog(this,{$oTree->getBlogId()});"></a>
+    {/if}
+{/foreach}
