@@ -176,31 +176,32 @@ class PluginTreeblogs_ModuleTopic_MapperTopic extends PluginTreeblogs_Inherit_Mo
 		{
 			$aFilter['order'] = array('topic_date_add desc');
 		}
-		$sql = "
-				SELECT 
-						t.topic_id, t.topic_date_add							
-					FROM 
-						".Config::Get('db.table.topic')." as t,	
-						".Config::Get('db.table.blog')." as b			
-					WHERE 
-						1=1					
-						".$sWhere."
-						AND
-						t.blog_id=b.blog_id				
-				UNION
-				SELECT 
-						t.topic_id, t.topic_date_add					
-					FROM 
-						".Config::Get('db.table.topic')." as t,	
-						".Config::Get('db.table.blog')." as b,			
-						".Config::Get('db.table.topic_blog')." as tb			
-					WHERE 
-						1=1					
-						".$sWhere2."
-						AND tb.blog_id=b.blog_id				
-						and t.topic_id=tb.topic_id				
+		$sql = "SELECT t.topic_id, t.topic_date_add FROM (
+                    (SELECT
+                            t.topic_id, t.topic_date_add, t.topic_count_comment
+                        FROM
+                            ".Config::Get('db.table.topic')." as t,
+                            ".Config::Get('db.table.blog')." as b
+                        WHERE
+                            1=1
+                            ".$sWhere."
+                            AND
+                            t.blog_id=b.blog_id)
+                    UNION
+                    (SELECT
+                            t.topic_id, t.topic_date_add, t.topic_count_comment
+                        FROM
+                            ".Config::Get('db.table.topic')." as t,
+                            ".Config::Get('db.table.blog')." as b,
+                            ".Config::Get('db.table.topic_blog')." as tb
+                        WHERE
+                            1=1
+                            ".$sWhere2."
+                            AND tb.blog_id=b.blog_id
+                            and t.topic_id=tb.topic_id)
+                ) AS t
 					ORDER BY ".implode(', ', $aFilter['order']) ."
-					LIMIT ?d, ?d";		
+					LIMIT ?d, ?d";
 		$aTopics=array();
 		if ($aRows=$this->oDb->selectPage($iCount,$sql,($iCurrPage-1)*$iPerPage, $iPerPage)) 
 		{

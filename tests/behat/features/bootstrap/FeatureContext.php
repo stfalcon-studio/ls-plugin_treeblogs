@@ -101,6 +101,30 @@ class FeatureContext extends MinkContext
         }
     }
 
+    /**
+     * @Then /^I should see element "([^"]*)" values in order:$/
+     */
+    public function iShouldSeeElementValuesInOrder($elementXpath, TableNode $table)
+    {
+        $element = $this->getSession()->getPage()->find('css', $elementXpath);
+        if ($element) {
+            $elementHtml = str_replace(array("\r\n", "\n"), '',$element->getHtml());
+            $regex = '/';
+            foreach ($table->getHash() as $valueItem) {
+                $regex .= '(' . preg_quote($valueItem['value'], '/'). ').*';
+            }
+            $regex = trim($regex, '.*') .'/';
+
+            if (!preg_match($regex, $elementHtml)) {
+                throw new ExpectationException('Elements order fail', $this->getSession());
+            }
+        }
+        else {
+            throw new ExpectationException('Container not found', $this->getSession());
+        }
+   }
+
+
 }
 
 
