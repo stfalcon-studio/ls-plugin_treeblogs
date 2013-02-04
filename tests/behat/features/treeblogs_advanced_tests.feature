@@ -1,5 +1,5 @@
 Feature: Treeblogs plugin standart features BDD
-    Test base functionality of LiveStreet Treeblogs plugin (duscussed plugins)
+    Test base functionality of LiveStreet Treeblogs plugin (duscussed topics & blog list pagination)
 
 @mink:selenium2
     Scenario: Treeblog Blog tests functionality of discussed topic list
@@ -35,7 +35,7 @@ Feature: Treeblogs plugin standart features BDD
           | second test topic</a> |
 
   @mink:selenium2
-  Scenario: Treeblog testting for pagination in blogs controller
+  Scenario: Treeblog testting for pagination in blogs controller (blogs list)
     Then check is plugin active "treeblogs"
     Given I load fixtures for plugin "treeblogs"
 

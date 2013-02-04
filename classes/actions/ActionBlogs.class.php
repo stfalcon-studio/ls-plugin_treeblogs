@@ -66,38 +66,4 @@ class PluginTreeblogs_ActionBlogs extends PluginTreeblogs_Inherit_ActionBlogs
         $this->Viewer_AddBlock('right', 'blogslist', array('plugin' => 'treeblogs'), Config::Get('plugin.treeblogs.treemenu_block_priority'));
         parent::EventShowBlogs();
     }
-
-    /*
-$sOrder='blog_rating';
-if (getRequest('order')) {
-$sOrder=getRequestStr('order');
-}
-
-$sOrderWay='desc';
-if (getRequest('order_way')) {
-    $sOrderWay=getRequestStr('order_way');
-}
-
-$aFilter=array(
-    'exclude_type' => 'personal'
-);
-
-$iPage=	preg_match("/^\d+$/i",$this->GetEventMatch(2)) ? $this->GetEventMatch(2) : 1;
-
-$aResult=$this->Blog_GetBlogsByFilter($aFilter,array($sOrder=>$sOrderWay),$iPage,Config::Get('module.blog.per_page'));
-$aBlogs=$aResult['collection'];
-
-$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.blog.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('blogs'),array('order'=>$sOrder,'order_way'=>$sOrderWay));
-
-$this->Viewer_Assign('aPaging',$aPaging);
-$this->Viewer_Assign("aBlogs",$aBlogs);
-$this->Viewer_Assign("sBlogOrder",htmlspecialchars($sOrder));
-$this->Viewer_Assign("sBlogOrderWay",htmlspecialchars($sOrderWay));
-$this->Viewer_Assign("sBlogOrderWayNext",htmlspecialchars($sOrderWay=='desc' ? 'asc' : 'desc'));
-
-$this->Viewer_AddHtmlTitle($this->Lang_Get('blog_menu_all_list'));
-
-$this->SetTemplateAction('index');
-
-    */
 }
