@@ -26,6 +26,20 @@ class treeblogsFixtures extends AbstractFixtures
 
         $firstTopic = $this->createTopic($mainBlog->getBlogId(), 'first test topic', NULL, array($mainBlog->getBlogId(), $secondLevelBlog->getBlogId(), $firstLevelBlog2->getBlogId()));
         $SecondTopic = $this->createTopic($mainBlog->getBlogId(), 'second test topic', NULL, array($mainBlog->getBlogId(), $secondLevelBlog->getBlogId()));
+
+        Config::Set('module.blog.per_page', 3);
+
+        //var_dump(get_class_methods(Config::getInstance())); die;
+
+        //Config::Set('module.blog.per_page', 3);
+
+//        $oConfig = Config::getInstance()->GetConfig();
+//        $oConfig['module']['blog']['per_page'] = 3;
+//        Config::getInstance()->Load($oConfig);
+        //Config::getInstance()->SetConfig($oConfig);
+
+        //var_dump($oConfig['module']['blog']['per_page']); die;
+        //$config['module']['blog']['per_page']
     }
 
     protected function createBlog($blogTitle, $blogUrl, $parentBlogId = NULL, $closedBlog = false)

@@ -22,7 +22,7 @@
 				{if $oUserCurrent}
 					<td class="blog-join-leave">
 						{if $oUserCurrent->getId()!=$oBlog->getOwnerId() and $oBlog->getType()=='open'}
-							<div onclick="ls.blog.toggleJoin(this, {$oBlog->getId()}); return false;" class="join {if $oBlog->getUserIsJoin()}active{/if}"></div>
+							<div onclick="ls.blog.toggleJoin(this, {$oBlog->getId()}); return false;" class="join {if $oBlog->getUserIsJoin()}active{/if}"><i class="icon-synio-join"></i>{if $oBlog->getUserIsJoin()}{$aLang.blog_join}{else}{$aLang.blog_leave}{/if}</div>
 						{else}
 							&mdash;
 						{/if}
@@ -32,7 +32,7 @@
                 <td>
                     {if $oBlog->getParentId()}
                         {assign var="oParentBlog" value=$oBlog->getParentBlog()}
-                        <a href="{$oParentBlog->getUrlFull()}/" class="title">{$oParentBlog->getTitle()|escape:'html'}</a>
+                        <a href="{router page='blogs'}{$oParentBlog->getUrl()}" class="title">{$oParentBlog->getTitle()|escape:'html'}</a>
                     {/if}
                 </td>
 				<td class="blog-rating rating"><strong>{$oBlog->getRating()}</strong></td>
