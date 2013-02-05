@@ -32,7 +32,7 @@
                 <td>
                     {if $oBlog->getParentId()}
                         {assign var="oParentBlog" value=$oBlog->getParentBlog()}
-                        <a href="{router page='blogs'}{$oParentBlog->getUrl()}" class="title">{$oParentBlog->getTitle()|escape:'html'}</a>
+                        <a href="{$oParentBlog->getBlogsUrl()}" class="title">{$oParentBlog->getTitle()|escape:'html'}</a>
                     {/if}
                 </td>
 				<td class="blog-rating rating"><strong>{$oBlog->getRating()}</strong></td>
