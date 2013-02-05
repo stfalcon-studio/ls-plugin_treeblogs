@@ -19,6 +19,12 @@ $config['blogs']['count'] = 0;
  */
 $config['treemenu_block_priority'] = 110;
 
+
+// Используется для тестов пагинации
+if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']=='livestreet.test') {
+    Config::Set('module.blog.per_page', 5);
+}
+
 /**
  * Регистрация таблицы topic_blog
  */

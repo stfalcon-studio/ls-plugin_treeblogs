@@ -42,8 +42,7 @@ Feature: Treeblogs plugin standart features BDD
           | value |
           | test blog1 level2 |
 
-
-        Then I am on "/blogs/"
+        Then I am on "/blogs/page2"
         Then element "#blogs-list-original" should contain values:
          | value |
          | test blog1 level1 |
@@ -72,7 +71,7 @@ Feature: Treeblogs plugin standart features BDD
         Then I select "Gadgets" from "parent_id"
         Then I press element by css "button[name='submit_blog_add']"
 
-        Then I am on "/blogs/"
+        Then I am on "/blogs/page2"
         Then element "#blogs-list-original" should contain values:
           | value |
           | Gadgets |
