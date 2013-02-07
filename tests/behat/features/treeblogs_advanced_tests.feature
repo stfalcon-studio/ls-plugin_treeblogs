@@ -18,13 +18,13 @@ Feature: Treeblogs plugin standart features BDD
 
         Then I follow "first test topic"
         And I wait "1000"
-        Given I press element by css "#content h4 .link-dotted"
+        Given I press element by css "#comment_id_0 a"
 
         And I fill in "comment_text" with "test comment"
         And I press "Add"
         Then I wait "1000"
 
-        Given I press element by css "#content h4 .link-dotted"
+        Given I press element by css "#comment_id_0 a"
         And I fill in "comment_text" with "test comment #2"
         And I press "Add"
         Then I wait "1000"
