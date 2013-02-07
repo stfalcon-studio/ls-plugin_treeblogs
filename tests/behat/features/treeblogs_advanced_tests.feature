@@ -35,13 +35,17 @@ Feature: Treeblogs plugin standart features BDD
           | first test topic</a> |
           | second test topic</a> |
 
-  @mink:selenium2
+
+@mink:selenium2
   Scenario: Treeblog testting for pagination in blogs list
     Then check is plugin active "treeblogs"
     Given I load fixtures for plugin "treeblogs"
 
     Given I am on "/login"
     Then I want to login as "admin"
+
+    Given I am on "/blogs/"
+    Then the response should not contain "pagination"
 
     Given I am on "/blog/add/"
     And I fill in "blog_title" with "blog#1"
@@ -50,7 +54,21 @@ Feature: Treeblogs plugin standart features BDD
     And I press element by css "button[name='submit_blog_add']"
     And I wait "1000"
 
-    Given I am on "/blogs/page2/"
-    Then I should see in element by css "blogs-list-original" values:
-    | value |
-    | class="title">blog#1</a> |
+    Given I am on "/blogs/"
+    And the response should contain "pagination"
+
+    And I should see in element by css "blogs-list-original" values:
+      | value |
+      | Gadgets |
+      | test1_level1 |
+      | test1_level2 |
+      | test2_level1 |
+      | test2_level2 |
+    And the response should contain ">2</a>"
+
+    Then I follow "Last"
+    And I wait "1000"
+    And I should see in element by css "blogs-list-original" values:
+      | value |
+      | blog#1 |
+    And the response should contain "pagination"
