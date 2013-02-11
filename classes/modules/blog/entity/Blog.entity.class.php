@@ -62,4 +62,8 @@ class PluginTreeblogs_ModuleBlog_EntityBlog extends PluginTreeblogs_Inherit_Modu
         $this->_aData['blogs_only'] = (bool) $data;
     }
 
+    public function getBlogsUrl()
+    {
+        return Router::GetPath('blogs').$this->getUrl().'/';
+    }
 }
