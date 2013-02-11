@@ -9,11 +9,6 @@ Feature: Treeblogs plugin standart features BDD
         Given I am on "/login"
         Then I want to login as "admin"
 
-        Then I am on homepage
-        Then I should see in element by css "sidebar" values:
-        | value |
-        | <a class="regular" href="http://livestreet.test/blog/gadgets/">Gadgets</a> |
-
         # create blog level1
         Then I am on "/blog/add"
         Then I fill in "blog_title" with "test blog1 level1"
@@ -38,22 +33,11 @@ Feature: Treeblogs plugin standart features BDD
         Then I fill in "blog_description" with "this is test description for blog"
         Then I press element by css "button[name='submit_blog_add']"
 
-        Then I should see in element by css "sidebar" values:
-          | value |
-          | test blog1 level2 |
-
-
-        Then I am on "/blogs/"
+        Then I am on "/blogs/page2"
         Then element "#blogs-list-original" should contain values:
          | value |
          | test blog1 level1 |
          | test blog1 level2 |
-
-        Then I should see in element by css "sidebar" values:
-          | value |
-          | /blog/gadgets/">Gadgets</a> |
-          | /blogs/test1_level1">test1_level1</a> |
-          | /blogs/test2_level1">test2_level1</a> |
 
         Then I am on "/blogs/test1_level1"
         Then I should see in element by css "blogs-list-original" values:
@@ -72,7 +56,13 @@ Feature: Treeblogs plugin standart features BDD
         Then I select "Gadgets" from "parent_id"
         Then I press element by css "button[name='submit_blog_add']"
 
-        Then I am on "/blogs/"
+        Then I am on "/blogs/page2"
+        Then element "#blogs-list-original" should contain values:
+          | value |
+          | blogs/gadgets/" class="title">Gadgets</a> |
+          | test blog1 level2 |
+
+        Then I am on "/blogs/gadgets/"
         Then element "#blogs-list-original" should contain values:
           | value |
           | Gadgets |
@@ -86,7 +76,7 @@ Feature: Treeblogs plugin standart features BDD
     Given I am on "/login"
     Then I want to login as "admin"
 
-  #create new topic
+  #create new topic (mast fail by duplicating of empty groups)
     Then I am on "/topic/add"
     Then I select "Gadgets" from "g0_0"
     Then I send js message "change()" to element by css "#g0_0"

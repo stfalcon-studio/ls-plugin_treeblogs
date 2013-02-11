@@ -8,8 +8,8 @@ class PluginTreeblogs_ActionBlogs extends PluginTreeblogs_Inherit_ActionBlogs
 
     protected function RegisterEvent()
     {
-        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^(page(\d+))?$/i', 'EventShowBlogsTree');
         parent::RegisterEvent();
+        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^(page(\d+))?$/i', 'EventShowBlogsTree');
     }
 
     public function EventShowBlogsTree()
@@ -66,5 +66,4 @@ class PluginTreeblogs_ActionBlogs extends PluginTreeblogs_Inherit_ActionBlogs
         $this->Viewer_AddBlock('right', 'blogslist', array('plugin' => 'treeblogs'), Config::Get('plugin.treeblogs.treemenu_block_priority'));
         parent::EventShowBlogs();
     }
-
 }
