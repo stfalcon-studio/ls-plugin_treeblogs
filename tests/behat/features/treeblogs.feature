@@ -74,6 +74,12 @@ Feature: Treeblogs plugin standart features BDD
         Then I am on "/blogs/page2"
         Then element "#blogs-list-original" should contain values:
           | value |
+          | blogs/gadgets/" class="title">Gadgets</a> |
+          | test blog1 level2 |
+
+        Then I am on "/blogs/gadgets/"
+        Then element "#blogs-list-original" should contain values:
+          | value |
           | Gadgets |
           | test blog1 level2 |
 
