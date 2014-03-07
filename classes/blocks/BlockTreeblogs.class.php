@@ -15,7 +15,7 @@ class PluginTreeblogs_BlockTreeblogs extends Block {
     
     public function Exec() {
         /*Дерево целиком*/
-        $this->Viewer_Assign('aTree',  $this->Blog_buidlTree() );
+        $this->Viewer_Assign('aTree',  $this->Blog_buidlTree());
 
         if ($this->GetParam('oBlog')) {
                 $iBlogId = $this->GetParam('oBlog')->getId();
