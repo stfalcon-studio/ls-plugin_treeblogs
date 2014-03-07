@@ -12,7 +12,7 @@ before_script:
   - cp /tmp/ls/.htaccess ./
   - mkdir -p plugins/treeblogs && cp -a /tmp/plugins/treeblogs/* plugins/treeblogs
   - echo "treeblogs" > ./plugins/plugins.dat
-  - cp plugins/treeblogs/test/topic_part_header.tpl templates/skin/synio/
+  - cp ./plugins/treeblogs/test/topic_part_header.tpl templates/skin/synio/
 
   # change application working folders for write access
   - chmod -R 0777 ./tmp
