@@ -33,8 +33,6 @@ Feature: Treeblogs plugin standart features BDD
         Then I fill in "topic_tags" with "test topic"
         Then I press element by css "#submit_topic_publish"
         Then I wait "2000"
-        Then print last response
-
 
   Then I should see in element by css "content" values:
           | value |
