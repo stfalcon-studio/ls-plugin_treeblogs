@@ -1,4 +1,4 @@
-{if $aTree|@count}
+{if $aTree && $aTree|@count}
     {math equation="x+1" x=$level assign=level}
     {foreach from=$aTree item=branch}
         <li class="level{$level-1}">
@@ -9,7 +9,7 @@
                 <ul class="{if in_array($branch.blog->getId(),$aTreePath)}active{else}regular{/if} level{$level}" id="m{$branch.blog->getId()}">
                     {include file="treeblogs-list.tpl" aTree=$branch.child level=$level}
                 </ul>
-            {else if (count($branch.child) || $branch.blog->getBlogsOnly())}
+            {elseif (count($branch.child) || $branch.blog->getBlogsOnly())}
                 <div class="end"></div>
                 <a  class="{if $iTreeBlogId ==$branch.blog->getId() }active{else}regular{/if}"  href="{router page='blogs'}{$branch.blog->getUrl()}">{$branch.blog->getTitle()}</a>
             {else}

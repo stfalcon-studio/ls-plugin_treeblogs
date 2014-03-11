@@ -1,4 +1,4 @@
-{if $aTree|@count}
+{if  $aTree && $aTree|@count}
     {math equation="x+1" x=$level assign=level}
         {foreach from=$aTree item=branch}
             <li class="level{$level-1}">

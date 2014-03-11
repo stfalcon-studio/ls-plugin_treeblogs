@@ -12,6 +12,7 @@ before_script:
   - cp /tmp/ls/.htaccess ./
   - mkdir -p plugins/treeblogs && cp -a /tmp/plugins/treeblogs/* plugins/treeblogs
   - echo "treeblogs" > ./plugins/plugins.dat
+  - cp ./plugins/treeblogs/tests/topic_part_header.tpl templates/skin/synio/
 
   # change application working folders for write access
   - chmod -R 0777 ./tmp
@@ -42,7 +43,7 @@ before_script:
   - sleep 5
 
   # download and launch Selenium
-  - wget -O /tmp/selenium-server-standalone.jar http://selenium.dev.stfalcon.com/selenium-server-standalone-latest.jar
+  - wget -O /tmp/selenium-server-standalone.jar http://selenium.googlecode.com/files/selenium-server-standalone-2.33.0.jar
   - java -jar /tmp/selenium-server-standalone.jar > /dev/null &
   - sleep 5
 

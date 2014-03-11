@@ -173,12 +173,12 @@ Feature: Treeblogs plugin standart features BDD
         Then I press element by css "#submit_topic_publish"
         Then I wait "2000"
 
-        Then I should see in element by css "content" values:
+  Then I should see in element by css "content" values:
           | value |
           | test topic create |
-          | class="topic-blog">Gadgets</a> |
-          | class="topic-blog">test1_level2</a> |
-          | class="topic-blog">test2_level1</a> |
+          | >Gadgets</a> |
+          | >test1_level2</a> |
+          | >test2_level1</a> |
 
 @mink:selenium2
     Scenario: Treeblog edit topic tests
@@ -211,8 +211,8 @@ Feature: Treeblogs plugin standart features BDD
         Then I should see in element by css "content" values:
           | value |
           | second test topic |
-          | class="topic-blog">Gadgets</a> |
-          | class="topic-blog">test2_level1</a> |
+          | >Gadgets</a> |
+          | >test2_level1</a> |
 
 @mink:selenium2
     Scenario: Check for correct blog tree structure
