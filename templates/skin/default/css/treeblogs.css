@@ -48,16 +48,8 @@ ul.treeblogs li{float: left;margin-right: 3px;}
 .menutree ul.regular{display: none;}
 .menutree ul.active{display: block;}
 
-ul.level0{font-size: 13px;}
-li.level0{font-style: normal;}
-
-ul.level1{font-size: 12px;}
-li.level1{font-style: italic;}
-
-ul.level2{font-size: 11px;}
-li.level2{font-style: oblique;}
-
-.menutree li {}
+.menutree li.level0 {margin-left:0;}
+.menutree li {margin-left:15px;}
 
 .menutree a.active{color: red;}
 .menutree a.regular{color: #70AAE0;}
