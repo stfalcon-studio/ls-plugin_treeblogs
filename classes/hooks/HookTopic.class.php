@@ -148,6 +148,12 @@ class PluginTreeblogs_HookTopic extends Hook
     public function TopicSubmitAfter($data)
     {
         $oTopic = $data['oTopic'];
+
+        $aBlogs = $this->Topic_GetTopicBlogs($oTopic->getId());
+        foreach ($aBlogs as $oBlogId) {
+            $this->Blog_RecalculateCountTopic($oBlogId);
+        }
+
         $this->Topic_MergeTopicBlogs($oTopic->getId(), $oTopic->getBlogId());
     }
 
