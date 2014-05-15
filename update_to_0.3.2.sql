@@ -1,0 +1,2 @@
+ALTER TABLE `prefix_topic_blog` ADD FOREIGN KEY ( `blog_id` ) REFERENCES `prefix_blog` (`blog_id`) ON DELETE CASCADE ON UPDATE CASCADE ;
+ALTER TABLE `prefix_topic_blog` ADD FOREIGN KEY ( `topic_id` ) REFERENCES `prefix_topic` (`topic_id`) ON DELETE CASCADE ON UPDATE CASCADE ;

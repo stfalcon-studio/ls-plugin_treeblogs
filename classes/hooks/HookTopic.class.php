@@ -18,6 +18,7 @@
  */
 class PluginTreeblogs_HookTopic extends Hook
 {
+    protected $aDeleteBlogs = array();
 
     /**
      * Регистрируем нужные хуки
@@ -56,6 +57,26 @@ class PluginTreeblogs_HookTopic extends Hook
         $this->AddHook('check_question_fields', 'CheckFields', __CLASS__);
         $this->AddHook('check_link_fields', 'CheckFields', __CLASS__);
         $this->AddHook('check_photoset_fields', 'CheckFields', __CLASS__);
+
+        $this->AddHook('topic_delete_before', 'TopicDeleteBefore', __CLASS__);
+        $this->AddHook('topic_delete_after', 'TopicDeleteAfter', __CLASS__);
+    }
+
+    public function TopicDeleteBefore($aData)
+    {
+        $aBlogs = $this->Topic_GetTopicBlogs($aData['oTopic']->getId());
+        $aBlogsId = array();
+        foreach ($aBlogs as $iBlogId) {
+            $aBlogsId[] = $iBlogId;
+        }
+        $this->aDeleteBlogs = $aBlogsId;
+    }
+
+    public function TopicDeleteAfter()
+    {
+        foreach ($this->aDeleteBlogs as $iBlogId) {
+            $this->Blog_RecalculateCountTopic($iBlogId);
+        }
     }
 
     /**
@@ -149,12 +170,12 @@ class PluginTreeblogs_HookTopic extends Hook
     {
         $oTopic = $data['oTopic'];
 
+        $this->Topic_MergeTopicBlogs($oTopic->getId(), $oTopic->getBlogId());
+
         $aBlogs = $this->Topic_GetTopicBlogs($oTopic->getId());
         foreach ($aBlogs as $iBlogId) {
             $this->Blog_RecalculateCountTopic($iBlogId);
         }
-
-        $this->Topic_MergeTopicBlogs($oTopic->getId(), $oTopic->getBlogId());
     }
 
     /**
