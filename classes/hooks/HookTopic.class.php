@@ -150,8 +150,8 @@ class PluginTreeblogs_HookTopic extends Hook
         $oTopic = $data['oTopic'];
 
         $aBlogs = $this->Topic_GetTopicBlogs($oTopic->getId());
-        foreach ($aBlogs as $oBlogId) {
-            $this->Blog_RecalculateCountTopic($oBlogId);
+        foreach ($aBlogs as $iBlogId) {
+            $this->Blog_RecalculateCountTopic($iBlogId);
         }
 
         $this->Topic_MergeTopicBlogs($oTopic->getId(), $oTopic->getBlogId());
