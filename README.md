@@ -19,6 +19,9 @@
 ИСТОРИЯ ВЕРСИЙ
 --------------
 
+v0.3.2
+- Исправлено пересчет количества топиков для блога
+
 - Ссылка на скачивание плагина для Livestreet версии 0.5
 https://github.com/stfalcon-studio/ls-plugin_treeblogs/archive/0.5.zip
 

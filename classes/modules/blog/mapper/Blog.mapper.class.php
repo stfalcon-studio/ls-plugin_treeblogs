@@ -59,6 +59,51 @@ class PluginTreeblogs_ModuleBlog_MapperBlog extends PluginTreeblogs_Inherit_Modu
         return true;
     }
 
+
+    /**
+     * Пересчитывает число топиков в блогах
+     *
+     * @param int|null $iBlogId ID блога
+     *
+     * @return bool
+     */
+    public function RecalculateCountTopic($iBlogId = null)
+    {
+        $sql = "UPDATE " . Config::Get('db.table.blog') . " AS b
+                LEFT JOIN (
+                    SELECT
+                        tt.blog_id,
+                        COUNT(tt.topic_id) AS cnt
+                    FROM (
+                        SELECT
+                            t.topic_id,
+                            t.blog_id
+                        FROM " . Config::Get('db.table.topic') . " AS t
+                        WHERE
+                            t.topic_publish = 1
+                            { AND t.blog_id = ?d }
+                        UNION
+                        SELECT
+                            tb.topic_id,
+                            tb.blog_id
+                        FROM " . Config::Get('db.table.topic_blog') . " AS tb
+                        WHERE 1=1
+                            { AND tb.blog_id = ?d }
+                    ) AS tt
+                    GROUP BY  tt.blog_id
+                ) AS r
+                ON r.blog_id = b.blog_id
+                SET b.blog_count_topic = IFNULL(r.cnt, 0)
+                WHERE 1=1
+                    { AND b.blog_id = ?d }
+                ";
+
+        if ($this->oDb->query($sql, is_null($iBlogId) ? DBSIMPLE_SKIP : $iBlogId, is_null($iBlogId) ? DBSIMPLE_SKIP : $iBlogId, is_null($iBlogId) ? DBSIMPLE_SKIP : $iBlogId)) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Получаем дочерние блоги
      * @param BlogId
