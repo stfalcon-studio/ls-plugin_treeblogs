@@ -60,3 +60,13 @@ ul.treeblogs li{float: left;margin-right: 3px;}
 .menutree div.end {background-image: url(../images/ico_end.gif);}
 
 #groups select { width: 150px; }
+
+.menutree li > a {
+    text-decoration: none;
+    border-bottom: 1px solid;
+    line-height: 1.75em;
+    cursor:pointer;
+}
+.menutree li.blog-only > a {
+    border-bottom: 1px dashed;
+}
